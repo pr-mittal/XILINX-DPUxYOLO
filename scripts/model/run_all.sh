@@ -63,7 +63,7 @@ python train.py --data dacsdc.yaml --epochs 300 --weights yolov5n.pt --cfg yolov
 cd ..
 python convert_model.py
 
-sudo ./docker_run.sh xilinx/vitis-ai-opt-pytorch-gpu
+./docker_run.sh xilinx/vitis-ai-opt-pytorch-gpu
 CONDA_BASE=$(conda info --base)
 source /opt/vitis_ai/conda/etc/profile.d/conda.sh
 # conda activate vitis-ai-optimizer_pytorch
@@ -76,8 +76,8 @@ export LOG=${BUILD}/logs
 mkdir -p ${LOG}
 
 # quantize & export quantized model
-python -u quantize.py -d ${BUILD} --quant_mode calib 2>&1 | tee ${LOG}/quant_calib.log
-python -u quantize.py -d ${BUILD} --quant_mode test  2>&1 | tee ${LOG}/quant_test.log
+python -u yolov3_quantize.py --weights yolov3/weights/yolov3.weights -d ${BUILD} --quant_mode calib 2>&1 | tee ${LOG}/quant_calib.log
+python -u yolov3_quantize.py --weights yolov3/weights/yolov3.weights -d ${BUILD} --quant_mode test  2>&1 | tee ${LOG}/quant_test.log
 
 
 # compile for target boards

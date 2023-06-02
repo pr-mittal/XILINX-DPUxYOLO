@@ -17,3 +17,4 @@ Sapiens_Reconfigurable/sw/PYNQ_Workshop-master/*
 *.log
 scripts/model/logs/*
 scripts/model/mnist/*
+scripts/model/archive/*

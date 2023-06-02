@@ -1,199 +1,241 @@
-#! /usr/bin/env python3
+# Copyright 2019 Xilinx Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-from __future__ import division
+from models.models import ofa_yolo_30,ofa_yolo_50,ofa_yolo_0
 
+import json
+import os
+import sys
+from pathlib import Path
+import time
+import logging
+import os, sys, math
 import argparse
-import tqdm
-import numpy as np
-
-from terminaltables import AsciiTable
-
+import datetime
+from copy import deepcopy
 import torch
-from torch.utils.data import DataLoader
-from torch.autograd import Variable
+from functools import partial
+from cfg import Cfg
+from easydict import EasyDict as edict
+from test import evaluate
+from pytorch_nndct.apis import torch_quantizer
+from pytorch_nndct import QatProcessor
+from nndct_shared.utils import NndctOption, option_util, NndctDebugLogger, NndctScreenLogger
+FILE = Path(__file__).resolve()
+ROOT = FILE.parents[0]  # YOLOv5 root directory
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))  # add ROOT to PATH
+ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
 
-from yolov3.pytorchyolo.models import load_model
-from yolov3.pytorchyolo.utils.utils import load_classes, ap_per_class, get_batch_statistics, non_max_suppression, to_cpu, xywh2xyxy, print_environment_info
-from utils.datasets import ListDataset
-from yolov3.pytorchyolo.utils.transforms import DEFAULT_TRANSFORMS
-from yolov3.pytorchyolo.utils.parse_config import parse_data_config
 
-
-def evaluate_model_file(model_path, weights_path, img_path, class_names, batch_size=8, img_size=416,
-                        n_cpu=8, iou_thres=0.5, conf_thres=0.5, nms_thres=0.5, verbose=True):
-    """Evaluate model on validation dataset.
-
-    :param model_path: Path to model definition file (.cfg)
-    :type model_path: str
-    :param weights_path: Path to weights or checkpoint file (.weights or .pth)
-    :type weights_path: str
-    :param img_path: Path to file containing all paths to validation images.
-    :type img_path: str
-    :param class_names: List of class names
-    :type class_names: [str]
-    :param batch_size: Size of each image batch, defaults to 8
-    :type batch_size: int, optional
-    :param img_size: Size of each image dimension for yolo, defaults to 416
-    :type img_size: int, optional
-    :param n_cpu: Number of cpu threads to use during batch generation, defaults to 8
-    :type n_cpu: int, optional
-    :param iou_thres: IOU threshold required to qualify as detected, defaults to 0.5
-    :type iou_thres: float, optional
-    :param conf_thres: Object confidence threshold, defaults to 0.5
-    :type conf_thres: float, optional
-    :param nms_thres: IOU threshold for non-maximum suppression, defaults to 0.5
-    :type nms_thres: float, optional
-    :param verbose: If True, prints stats of model, defaults to True
-    :type verbose: bool, optional
-    :return: Returns precision, recall, AP, f1, ap_class
+def init_logger(log_file=None, log_dir=None, log_level=logging.INFO, mode='w', stdout=True):
     """
-    dataloader = _create_validation_data_loader(
-        img_path, batch_size, img_size, n_cpu)
-    model = load_model(model_path, weights_path)
-    metrics_output = _evaluate(
-        model,
-        dataloader,
-        class_names,
-        img_size,
-        iou_thres,
-        conf_thres,
-        nms_thres,
-        verbose)
-    return metrics_output
+    mode: 'a', append; 'w', cover.
+    """
+    def get_date_str():
+        now = datetime.datetime.now()
+        return now.strftime('%Y-%m-%d_%H-%M-%S')
+
+    fmt = '%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s: %(message)s'
+    if log_dir is None:
+        log_dir = '~/temp/log/'
+    if log_file is None:
+        log_file = 'log_' + get_date_str() + '.txt'
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+    log_file = os.path.join(log_dir, log_file)
+    print('log file path:' + log_file)
+
+    logging.basicConfig(level=logging.DEBUG,
+                        format=fmt,
+                        filename=log_file,
+                        filemode=mode)
+
+    if stdout:
+        console = logging.StreamHandler(stream=sys.stdout)
+        console.setLevel(log_level)
+        formatter = logging.Formatter(fmt)
+        console.setFormatter(formatter)
+        logging.getLogger('').addHandler(console)
+
+    return logging
+def get_args(**kwargs):
+    cfg = kwargs
+    parser = argparse.ArgumentParser(description='Train the Model on images and target masks',
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('-b', '--batch-size', metavar='B', type=int, nargs='?', default=2,
+                         help='Batch size', dest='batchsize')
+    parser.add_argument('-l', '--learning-rate', metavar='LR', type=float, nargs='?', default=0.001,
+                        help='Learning rate', dest='learning_rate')
+    parser.add_argument('-f', '--load', dest='load', type=str, default=None,
+                        help='Load model from a .pth file')
+    parser.add_argument('-g', '--gpu', metavar='G', type=str, default='0',
+                        help='GPU', dest='gpu')
+    parser.add_argument('-pretrained', type=str, default=None, help='pretrained yolov4.conv.137')
+    parser.add_argument(
+        '-optimizer', type=str, default='adam',
+        help='training optimizer',
+        dest='TRAIN_OPTIMIZER')
+    parser.add_argument(
+        '-iou-type', type=str, default='iou',
+        help='iou type (iou, giou, diou, ciou)',
+        dest='iou_type')
+    parser.add_argument(
+        '-keep-checkpoint-max', type=int, default=10,
+        help='maximum number of checkpoints to keep. If set 0, all checkpoints will be kept',
+        dest='keep_checkpoint_max')
+    parser.add_argument('--save-dir', default='./build/val', help='save to save_dir')
+    parser.add_argument('--save-period', type=int, default=-1, help='Save checkpoint every x epochs (disabled if < 1)')
+    parser.add_argument('--nndct_quant', action='store_true', help='Train nndct QAT model')
+    parser.add_argument('--qat_group', action='store_true', help='param groups')
+    parser.add_argument('--ratio', default=30, type=int, help='pruning ratio')
+    parser.add_argument('--num_worker', default=8, help='number of workers')
+    parser.add_argument('--conf-thres', type=float, default=0.001, help='confidence threshold')
+    parser.add_argument('--iou-thres', type=float, default=0.65, help='NMS IoU threshold')
+    parser.add_argument('--dump_xmodel', action='store_true', default=False)
+    args = vars(parser.parse_args())
+
+    # for k in args.keys():
+    #     cfg[k] = args.get(k)
+    cfg.update(args)
+
+    return edict(cfg)
+
+def main():
+    logging = init_logger(log_dir='log')
+    cfg = get_args(**Cfg)
+    os.environ["CUDA_VISIBLE_DEVICES"] = cfg.gpu
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    logging.info(f'Using device {device}')
+    if cfg.nndct_quant:
+        os.environ["W_QUANT"] = "1"
+    # # model
+    anchors = [[10, 13, 16, 30, 33, 23], [30, 61, 62, 45, 59, 119], [116, 90, 156, 198, 373, 326]]
+    pretrained_ofa_model = cfg.pretrained 
+    with open(pretrained_ofa_model, 'rb') as f:
+        checkpoint = torch.load(f, map_location='cpu')
+    ema_weight = checkpoint['qat_ema_state_dict']
+
+    if cfg.ratio == 30:
+        model = ofa_yolo_30(anchors)
+    elif cfg.ratio == 0:
+        model = ofa_yolo_0(anchors)
+    elif cfg.ratio == 50:
+        model = ofa_yolo_50(anchors)
+    model.cuda()
 
 
-def print_eval_stats(metrics_output, class_names, verbose):
-    if metrics_output is not None:
-        precision, recall, AP, f1, ap_class = metrics_output
-        if verbose:
-            # Prints class AP and mean AP
-            ap_table = [["Index", "Class", "AP"]]
-            for i, c in enumerate(ap_class):
-                ap_table += [[c, class_names[c], "%.5f" % AP[i]]]
-            print(AsciiTable(ap_table).table)
-        print(f"---- mAP {AP.mean():.5f} ----")
+    _ori_model = deepcopy(model)
+    model.train()
+    im = (torch.zeros(1, 3, cfg.imgsz, cfg.imgsz).to(device).type_as(next(model.parameters())))
+    for _ in range(2):
+        y = model(im)  # dry runs
+    model.forward = partial(model.forward, quant=True)
+    qat_processor = QatProcessor(model, (im,), bitwidth=8, mix_bit=False)
+    _trainable_model = qat_processor.trainable_model()
+    _trainable_model.load_state_dict(ema_weight, strict=True)
+    deploy_path = f'./tmp_deployable_model_{cfg.ratio}'
+    _deployable_net = qat_processor.convert_to_deployable(_trainable_model, deploy_path)
+    _ori_model.load_state_dict(_deployable_net.state_dict(), strict=True)
+    model=_ori_model
+    print('load successfully')
+    model.eval()
+    model.cuda()
+    from pytorch_nndct.apis import torch_quantizer
+    import pytorch_nndct as py_nndct
+    from nndct_shared.utils import NndctOption
+    from nndct_shared.base import key_names, NNDCT_KEYS, NNDCT_DEBUG_LVL, GLOBAL_MAP, NNDCT_OP
+    import nndct_shared.quantization as nndct_quant
+    from pytorch_nndct.quantization import torchquantizer
+    model.forward = partial(model.forward, quant=True)
+    print(f"NNDCT quant dir: {deploy_path}")
+    quantizer = torch_quantizer(quant_mode='test',
+                                bitwidth=8,
+                                module=model,
+                                input_args=im,
+                                output_dir=os.path.join(deploy_path, 'test'))
+    if (NndctOption.nndct_stat.value > 2):
+        def do_quantize(instance, blob, name, node=None, tensor_type='input'):
+            # forward quant graph but not quantize parameter and activation
+            if NndctOption.nndct_quant_off.value:
+                return blob
+
+            blob_save = None
+            if isinstance(blob.values, torch.Tensor):
+                blob_save = blob
+                blob = blob.values.data
+
+            quant_device = GLOBAL_MAP.get_ele(NNDCT_KEYS.QUANT_DEVICE)
+            if blob.device.type != quant_device.type:
+                raise TypeError(
+                    "Device of quantizer is {}, device of model and data should match device of quantizer".format(
+                        quant_device.type))
+
+            if (NndctOption.nndct_stat.value > 2):
+                quant_data = nndct_quant.QuantizeData(name, blob.cpu().detach().numpy())
+            # quantize the tensor
+            bnfp = instance.get_bnfp(name, True, tensor_type)
+            if (NndctOption.nndct_stat.value > 1):
+                print('---- quant %s tensor: %s with 1/step = %g' % (
+                    tensor_type, name, bnfp[1]))
+            # hardware cut method
+            mth = 4 if instance.lstm else 2
+            if tensor_type == 'param':
+                mth = 3
+
+            res = py_nndct.nn.NndctFixNeuron(blob,
+                                             blob,
+                                             maxamp=[bnfp[0], bnfp[1]],
+                                             method=mth)
+
+            if (NndctOption.nndct_stat.value > 2):
+                quant_efficiency, sqnr = quant_data.quant_efficiency(blob.cpu().detach().numpy(), 8)
+                torchquantizer.global_snr_inv += 1 / sqnr
+                print(
+                    f"quant_efficiency={quant_efficiency}, global_snr_inv={torchquantizer.global_snr_inv} {quant_data._name}\n")
+
+            # update param to nndct graph
+            if tensor_type == 'param':
+                instance.update_param_to_nndct(node, name, res.cpu().detach().numpy())
+
+            if blob_save is not None:
+                blob_save.values.data = blob
+                blob = blob_save
+                res = blob_save
+
+            return res
+
+        _quantizer = GLOBAL_MAP.get_ele(NNDCT_KEYS.QUANTIZER)
+        _quantizer.do_quantize = do_quantize.__get__(_quantizer)
+    quant_model = quantizer.quant_model
+    ori_forward = quant_model.forward
+    post_method = model.m.method
+
+    def forward(x):
+        out = ori_forward(x)
+        return post_method(out)
+
+    quant_model.forward = forward
+
+    model = quant_model
+    if cfg.dump_xmodel:
+        cfg.batchsize = 1
+        evaluate(model, cfg=cfg, device=device, nndct_quant=True, dump_xmodel=True)
+        quantizer.export_xmodel(deploy_path, deploy_check=True)
     else:
-        print("---- mAP not measured (no detections found by model) ----")
-
-
-def _evaluate(model, dataloader, class_names, img_size, iou_thres, conf_thres, nms_thres, verbose):
-    """Evaluate model on validation dataset.
-
-    :param model: Model to evaluate
-    :type model: models.Darknet
-    :param dataloader: Dataloader provides the batches of images with targets
-    :type dataloader: DataLoader
-    :param class_names: List of class names
-    :type class_names: [str]
-    :param img_size: Size of each image dimension for yolo
-    :type img_size: int
-    :param iou_thres: IOU threshold required to qualify as detected
-    :type iou_thres: float
-    :param conf_thres: Object confidence threshold
-    :type conf_thres: float
-    :param nms_thres: IOU threshold for non-maximum suppression
-    :type nms_thres: float
-    :param verbose: If True, prints stats of model
-    :type verbose: bool
-    :return: Returns precision, recall, AP, f1, ap_class
-    """
-    model.eval()  # Set model to evaluation mode
-
-    Tensor = torch.cuda.FloatTensor if torch.cuda.is_available() else torch.FloatTensor
-
-    labels = []
-    sample_metrics = []  # List of tuples (TP, confs, pred)
-    for _, imgs, targets in tqdm.tqdm(dataloader, desc="Validating"):
-        # Extract labels
-        labels += targets[:, 1].tolist()
-        # Rescale target
-        targets[:, 2:] = xywh2xyxy(targets[:, 2:])
-        targets[:, 2:] *= img_size
-
-        imgs = Variable(imgs.type(Tensor), requires_grad=False)
-
-        with torch.no_grad():
-            outputs = model(imgs)
-            outputs = non_max_suppression(outputs, conf_thres=conf_thres, iou_thres=nms_thres)
-
-        sample_metrics += get_batch_statistics(outputs, targets, iou_threshold=iou_thres)
-
-    if len(sample_metrics) == 0:  # No detections over whole validation set.
-        print("---- No detections over whole validation set ----")
-        return None
-
-    # Concatenate sample statistics
-    true_positives, pred_scores, pred_labels = [
-        np.concatenate(x, 0) for x in list(zip(*sample_metrics))]
-    metrics_output = ap_per_class(
-        true_positives, pred_scores, pred_labels, labels)
-
-    print_eval_stats(metrics_output, class_names, verbose)
-
-    return metrics_output
-
-
-def _create_validation_data_loader(img_path, batch_size, img_size, n_cpu):
-    """
-    Creates a DataLoader for validation.
-
-    :param img_path: Path to file containing all paths to validation images.
-    :type img_path: str
-    :param batch_size: Size of each image batch
-    :type batch_size: int
-    :param img_size: Size of each image dimension for yolo
-    :type img_size: int
-    :param n_cpu: Number of cpu threads to use during batch generation
-    :type n_cpu: int
-    :return: Returns DataLoader
-    :rtype: DataLoader
-    """
-    dataset = ListDataset(img_path, img_size=img_size, multiscale=False, transform=DEFAULT_TRANSFORMS)
-    dataloader = DataLoader(
-        dataset,
-        batch_size=batch_size,
-        shuffle=False,
-        num_workers=n_cpu,
-        pin_memory=True,
-        collate_fn=dataset.collate_fn)
-    return dataloader
-
-
-def run():
-    print_environment_info()
-    parser = argparse.ArgumentParser(description="Evaluate validation data.")
-    parser.add_argument("-m", "--model", type=str, default="yolov3/config/yolov3.cfg", help="Path to model definition file (.cfg)")
-    parser.add_argument("-w", "--weights", type=str, default="yolov3/weights/yolov3.weights", help="Path to weights or checkpoint file (.weights or .pth)")
-    parser.add_argument("-d", "--data", type=str, default="yolov3/config/coco.data", help="Path to data config file (.data)")
-    parser.add_argument("-b", "--batch_size", type=int, default=8, help="Size of each image batch")
-    parser.add_argument("-v", "--verbose", action='store_true', help="Makes the validation more verbose")
-    parser.add_argument("--img_size", type=int, default=416, help="Size of each image dimension for yolo")
-    parser.add_argument("--n_cpu", type=int, default=8, help="Number of cpu threads to use during batch generation")
-    parser.add_argument("--iou_thres", type=float, default=0.5, help="IOU threshold required to qualify as detected")
-    parser.add_argument("--conf_thres", type=float, default=0.01, help="Object confidence threshold")
-    parser.add_argument("--nms_thres", type=float, default=0.4, help="IOU threshold for non-maximum suppression")
-    args = parser.parse_args()
-    print(f"Command line arguments: {args}")
-
-    # Load configuration from data file
-    data_config = parse_data_config(args.data)
-    # Path to file containing all images for validation
-    valid_path = "yolov3/"+data_config["valid"]
-    class_names = load_classes("yolov3/"+data_config["names"])  # List of class names
-
-    precision, recall, AP, f1, ap_class = evaluate_model_file(
-        args.model,
-        args.weights,
-        valid_path,
-        class_names,
-        batch_size=args.batch_size,
-        img_size=args.img_size,
-        n_cpu=args.n_cpu,
-        iou_thres=args.iou_thres,
-        conf_thres=args.conf_thres,
-        nms_thres=args.nms_thres,
-        verbose=True)
+        evaluate(model, cfg=cfg, device=device, nndct_quant=True)
 
 
 if __name__ == "__main__":
-    run()
+    main()
