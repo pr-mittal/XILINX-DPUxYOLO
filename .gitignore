@@ -5,7 +5,15 @@ __pycache__
 scripts/model/images/train/*
 scripts/model/images/valid/*
 scripts/model/images/test/*
+scripts/model/build/dataset/*
+scripts/model/build/target*
 vm-setup/lfs/*
 scripts/model/yolov5/*
+scripts/model/YOLOV5m/*
+scripts/model/yolov3/*
 scripts/model/dataset/*
 trash/*
+Sapiens_Reconfigurable/sw/PYNQ_Workshop-master/*
+*.log
+scripts/model/logs/*
+scripts/model/mnist/*

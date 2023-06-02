@@ -40,6 +40,12 @@ elif [ $1 = u50 ]; then
       echo "-----------------------------------------"
       echo "COMPILING MODEL FOR ALVEO U50.."
       echo "-----------------------------------------"
+elif [ $1 = kv260 ]; then
+      ARCH=/opt/vitis_ai/compiler/arch/DPUCZDX8G/KV260/arch.json
+      TARGET=kv260
+      echo "-----------------------------------------"
+      echo "COMPILING MODEL FOR Kria kv260.."
+      echo "-----------------------------------------"
 else
       echo  "Target not found. Valid choices are: zcu102, zcu104, vck190, u50 ..exiting"
       exit 1

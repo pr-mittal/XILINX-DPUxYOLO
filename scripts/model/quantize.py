@@ -29,8 +29,12 @@ import torchvision
 import torch.nn as nn
 import torch.nn.functional as F
 from pytorch_nndct.apis import torch_quantizer, dump_xmodel
-
+from compile_data import YoloDataset
+from torch.utils.data import DataLoader
+import sys
 from common import *
+sys.path.insert(0, './yolov5')
+from yolov5.models.common import DetectMultiBackend
 
 
 DIVIDER = '-----------------------------------------'
@@ -40,7 +44,7 @@ DIVIDER = '-----------------------------------------'
 
 def quantize(build_dir,quant_mode,batchsize):
 
-  dset_dir = build_dir + '/dataset'
+  dset_dir ='./dataset'
   float_model = build_dir + '/float_model'
   quant_model = build_dir + '/quant_model'
 
@@ -56,31 +60,46 @@ def quantize(build_dir,quant_mode,batchsize):
     print('No CUDA devices available..selecting CPU')
     device = torch.device('cpu')
 
-  # load trained model
-  model = CNN().to(device)
-  model.load_state_dict(torch.load(os.path.join(float_model,'f_model.pth')))
+  dataset=YoloDataset(dset_dir)
+  test_loader=DataLoader(dataset,batch_size=batchsize,shuffle=True,num_workers=2)
 
+  # model=torch.load(os.path.join(float_model,'f_model_full.pth'))
+  # model=CNN()
+  model = DetectMultiBackend(weights=os.path.join(float_model,'f_model.pt'), device=device, dnn=False, data=dset_dir+"/dacsdc.yaml", fp16=False)
+  print(model.state_dict())
+  test(model, device, test_loader)
+
+  # state_dict=torch.load(os.path.join(float_model,'f_model.pth'))
+  # new_dict={}
+  # for k, v in list(name_dict.items()):
+  #     name_dict[new_key] = name_dict.pop(k)
+  # # print().keys())
+  # return
+  # model.load_state_dict(torch.load(os.path.join(float_model,'f_model.pth')))
+  # model.to(device)
+  # model.eval()
   # force to merge BN with CONV for better quantization accuracy
   optimize = 1
 
   # override batchsize if in test mode
   if (quant_mode=='test'):
     batchsize = 1
-  
-  rand_in = torch.randn([batchsize, 1, 28, 28])
+  rand_in = torch.randn([batchsize, 3, 1080,1920])
   quantizer = torch_quantizer(quant_mode, model, (rand_in), output_dir=quant_model) 
   quantized_model = quantizer.quant_model
 
 
   # data loader
-  test_dataset = torchvision.datasets.MNIST(dset_dir,
-                                            train=False, 
-                                            download=True,
-                                            transform=test_transform)
+  # test_dataset = torchvision.datasets.MNIST(dset_dir,
+  #                                           train=False, 
+  #                                           download=True,
+  #                                           transform=test_transform)
 
-  test_loader = torch.utils.data.DataLoader(test_dataset,
-                                            batch_size=batchsize, 
-                                            shuffle=False)
+  # test_loader = torch.utils.data.DataLoader(test_dataset,
+  #                                           batch_size=batchsize, 
+  #                                           shuffle=False)
+  
+  # print("DONE")
 
   # evaluate 
   test(quantized_model, device, test_loader)
@@ -91,7 +110,7 @@ def quantize(build_dir,quant_mode,batchsize):
     quantizer.export_quant_config()
   if quant_mode == 'test':
     quantizer.export_xmodel(deploy_check=False, output_dir=quant_model)
-  
+  print("DONE")
   return
 
 

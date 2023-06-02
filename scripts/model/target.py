@@ -98,7 +98,7 @@ def main():
     # construct the argument parser and parse the arguments
     ap = argparse.ArgumentParser()
     ap.add_argument('-d', '--build_dir',  type=str,  default='build', help='Path to build folder. Default is build')
-    ap.add_argument('-t', '--target',     type=str,  default='zcu102', choices=['zcu102','zcu104','u50','vck190'], help='Target board type (zcu102,zcu104,u50,vck190). Default is zcu102')
+    ap.add_argument('-t', '--target',     type=str,  default='zcu102', choices=['zcu102','zcu104','u50','vck190','kv260'], help='Target board type (zcu102,zcu104,u50,vck190,kv260). Default is zcu102')
     ap.add_argument('-n', '--num_images', type=int,  default=10000, help='Number of test images. Default is 10000')
     ap.add_argument('-a', '--app_dir',    type=str,  default='application', help='Full path of application code folder. Default is application')
     args = ap.parse_args()  

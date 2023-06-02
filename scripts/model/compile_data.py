@@ -3,6 +3,10 @@ import os
 import shutil
 import random
 from math import floor
+import torch
+from torch.utils.data import Dataset
+import numpy as np
+import cv2
 pathlib = '/home/siliconmerc/git/dac_sdc_2023/scripts/model/dataset'
 labels={"Motor Vehicle":0,"Non-motorized Vehicle":1,"Pedestrian":2,"Traffic Light-Red Light":3,"Traffic Light-Yellow Light":4,"Traffic Light-Green Light":5,"Traffic Light-Off":6}
 
@@ -19,7 +23,6 @@ def divide_dataset():
         for file in val:
             shutil.copy(pathlib+"/images/JPEGImages/"+file, pathlib+"/"+key+"/images/"+file)
             shutil.copy(pathlib+"/images/Annotations/"+file.replace("jpg","xml"), pathlib+"/"+key+"/Annotations/"+file.replace("jpg","xml"))
-divide_dataset()
 
 def create_labels():
     for folder in ["train","test","val"]:
@@ -88,4 +91,7 @@ def create_labels():
             # print(tree[0])
             file.close()
             # break
-create_labels()
+
+if __name__ =="__main__":
+    divide_dataset()
+    create_labels()
