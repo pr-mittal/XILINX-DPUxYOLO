@@ -1,32 +1,5 @@
 #! /usr/bin/env python3
 
-from __future__ import division
-
-import os
-import argparse
-import tqdm
-import random
-import numpy as np
-
-from PIL import Image
-
-import torch
-import torchvision.transforms as transforms
-from torch.utils.data import DataLoader
-from torch.autograd import Variable
-from terminaltables import AsciiTable
-from pytorch_nndct.apis import torch_quantizer, dump_xmodel
-
-from yolov3.pytorchyolo.models import load_model
-from yolov3.pytorchyolo.utils.utils import load_classes, rescale_boxes, non_max_suppression, print_environment_info,ap_per_class,get_batch_statistics, non_max_suppression, to_cpu, xywh2xyxy
-from yolov3.pytorchyolo.utils.datasets import ImageFolder
-from yolov3.pytorchyolo.utils.transforms import Resize, DEFAULT_TRANSFORMS
-from utils.datasets import ListDataset
-
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
-from matplotlib.ticker import NullLocator
-
 from models.models import ofa_yolo_30,ofa_yolo_50,ofa_yolo_0
 
 import json
@@ -43,7 +16,7 @@ import numpy as np
 import torch
 from cfg import Cfg
 from easydict import EasyDict as edict
-from test import evaluate
+from yolov3_test import evaluate
 from pytorch_nndct.apis import torch_quantizer
 import pytorch_nndct as py_nndct
 from nndct_shared.utils import NndctOption

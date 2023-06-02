@@ -26,7 +26,7 @@ import torch.nn as nn
 
 from easydict import EasyDict as edict
 from copy import deepcopy
-from dataset import Yolo_dataset
+from utils.datasets import Yolo_dataset
 from cfg import Cfg
 from torch.cuda import amp
 from models.models import ofa_yolo_30
@@ -34,9 +34,9 @@ from functools import partial
 
 import yaml
 from torch.optim import Adam, AdamW, SGD, lr_scheduler
-from tool.utils import labels_to_class_weights,check_anchors,compute_loss,fitness
-from tool import torch_utils
-from test import evaluate
+from utils.utils import labels_to_class_weights,check_anchors,compute_loss,fitness
+from utils import torch_utils
+from yolov3_test import evaluate
 
 def train(model, device, cfg,nndct_quant=False):
     epochs = cfg.epoch
@@ -66,7 +66,7 @@ def train(model, device, cfg,nndct_quant=False):
     #     model(torch.zeros(1, 3, imgsz, imgsz).to(device).type_as(next(model.parameters())))  # run once pad = 0.0 if task == 'speed' else 0.5
     class_num = cfg.class_num
     train_image = cfg.data_path + cfg.train_image
-    dataset = Yolo_dataset(train_image, imgsz, batch_size, hyp=cfg, augment=True, cache_images=False, rect=cfg.rect)
+    dataset = Yolo_dataset(train_image, imgsz, batch_size, hyp=cfg, augment=True, rect=cfg.rect)
 
     # Use torch.utils.data.DataLoader() if dataset.properties will update during training else InfiniteDataLoader()
     dataloader = torch.utils.data.DataLoader(dataset,
@@ -428,11 +428,11 @@ if __name__ == "__main__":
         del checkpoint['anchors']
         model.model.load_state_dict(checkpoint, strict=True)
         print(f'load successfully: ratio:{cfg.ratio};  pretrained:{pretrained_ofa_model}')
-        model = model.cuda()
+        model = model.to(device)
     else:
         if cfg.ratio == 30:
             model = ofa_yolo_30(anchors)
-        model = model.cuda()
+        model = model.to(device)
 
     try:
         if cfg.nndct_quant:

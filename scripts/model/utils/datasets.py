@@ -221,7 +221,7 @@ class Yolo_dataset(Dataset):
         try:
             path = str(Path(path))
             try:
-                self.img_files=[path+"/images"+x for x in os.listdir(path+"/images")]
+                self.img_files=[path+"/images/"+x for x in os.listdir(path+"/images") if '.'+x.split('.')[-1] in img_formats]
             except Exception:
                 raise Exception('Error loading data')
             # parent = str(Path(path).parent) + os.sep
@@ -262,12 +262,26 @@ class Yolo_dataset(Dataset):
         nf, nm, ne, nc, n = cache.pop('results')  # found, missing, empty, corrupted, total
         d = f"Scanning '{cache_path}' images and labels... {nf} found, {nm} missing, {ne} empty, {nc} corrupted"
         tqdm(None, desc=d, total=n, initial=n)  # display cache results
-
+        # print(len(cache.values()))
+        # for x in cache.values():
+        #     print(len(x))
+        # print(cache.values())
         # Read cache
-        labels, shapes, self.segments = zip(*cache.values())
+        labels=[]
+        shapes=[] 
+        self.segments=[]
+        self.img_files=[]
+        for y,x in cache.items():
+            if(type(x)==list and len(x)==3):
+                labels.append(x[0])
+                shapes.append(x[1])
+                self.segments.append(x[2])
+                self.img_files.append(y)
+        # zip(*cache.values())
+        # print(cache.keys())
         self.labels = list(labels)
         self.shapes = np.array(shapes, dtype=np.float64)
-        self.img_files = list(cache.keys())  # update
+        # self.img_files = list(cache.keys())  # update
 
         self.label_files = []
         for path in self.img_files:
@@ -314,6 +328,7 @@ class Yolo_dataset(Dataset):
         x = {}  # dict
         num_miss, num_found, num_empty, num_corrupt, msgs = 0, 0, 0, 0, []
         desc = f"Scanning '{path.parent / path.stem}' images and labels..."
+        # print(self.img_files, self.label_files)
         with Pool(NUM_THREADS) as pool:
             pbar = tqdm(pool.imap(check_im_lb, zip(self.img_files, self.label_files)),
                         desc=desc, total=len(self.img_files))

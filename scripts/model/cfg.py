@@ -87,9 +87,9 @@ Cfg.anchor_threshold = 4.0
 Cfg.scale = 0.5
 Cfg.anchor_t = 4.0  # anchor-multiple threshold
 #COCO data
-Cfg.data_path = 'dataset/images/' #'/proj/xcdhdstaff1/shangton/coco/'
-# Cfg.train_image = 'train2017.txt'
-# Cfg.val_image = 'val2017.txt'
+Cfg.data_path = 'dataset/' #'/proj/xcdhdstaff1/shangton/coco/'
+Cfg.train_image = 'train'
+Cfg.val_image = 'val'
 
 Cfg.class_num = 7
 Cfg.class_names = ['Motor Vehicle','Non-motorized Vehicle','Pedestrian','Traffic Light-Red Light' ,'Traffic Light-Yellow Light','Traffic Light-Green Light' ,'Traffic Light-Off']  # class names

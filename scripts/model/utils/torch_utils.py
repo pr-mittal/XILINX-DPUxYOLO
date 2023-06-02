@@ -24,7 +24,7 @@ import itertools
 import struct  # get_image_size
 import imghdr  # get_image_size
 
-from tool import utils
+from . import utils
 
 from copy import deepcopy
 import torch.nn as nn

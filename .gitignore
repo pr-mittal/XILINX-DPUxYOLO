@@ -18,3 +18,4 @@ Sapiens_Reconfigurable/sw/PYNQ_Workshop-master/*
 scripts/model/logs/*
 scripts/model/mnist/*
 scripts/model/archive/*
+scripts/model/build/log*

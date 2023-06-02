@@ -56,9 +56,9 @@ LOG=$3
 
 compile() {
   vai_c_xir \
-  --xmodel      ${BUILD}/quant_model/CNN_int.xmodel \
+  --xmodel      ${BUILD}/quant_model/yolov3_int.xmodel \
   --arch        $ARCH \
-  --net_name    CNN_${TARGET} \
+  --net_name    yolov3_${TARGET} \
   --output_dir  ${BUILD}/compiled_model
 }
 
@@ -68,6 +68,3 @@ compile 2>&1 | tee ${LOG}/compile_$TARGET.log
 echo "-----------------------------------------"
 echo "MODEL COMPILED"
 echo "-----------------------------------------"
-
-
-
