@@ -595,13 +595,13 @@ class Model(torch.nn.Module):
         # anchors = [[10, 13, 16, 30, 33, 23], [30, 61, 62, 45, 59, 119], [116, 90, 156, 198, 373, 326]]
         # nl = len(anchors)
         # self.register_buffer('anchors', torch.tensor(anchors).float().view(nl, -1, 2))  # shape(nl,na,2)
-        self.module_240 = torch.nn.Conv2d(in_channels=192, out_channels=255, kernel_size=[1, 1], stride=[1, 1],
+        self.module_240 = torch.nn.Conv2d(in_channels=192, out_channels=(7+5)*3, kernel_size=[1, 1], stride=[1, 1],
                                           padding=[0, 0], dilation=[1, 1], groups=1,
                                           bias=True)  # Model::Model/Detect[model]/Detect[24]/Conv2d[m]/ModuleList[0]/15367
-        self.module_241 = torch.nn.Conv2d(in_channels=384, out_channels=255, kernel_size=[1, 1], stride=[1, 1],
+        self.module_241 = torch.nn.Conv2d(in_channels=384, out_channels=(7+5)*3, kernel_size=[1, 1], stride=[1, 1],
                                           padding=[0, 0], dilation=[1, 1], groups=1,
                                           bias=True)  # Model::Model/Detect[model]/Detect[24]/Conv2d[m]/ModuleList[1]/15386
-        self.module_242 = torch.nn.Conv2d(in_channels=768, out_channels=255, kernel_size=[1, 1], stride=[1, 1],
+        self.module_242 = torch.nn.Conv2d(in_channels=768, out_channels=(7+5)*3, kernel_size=[1, 1], stride=[1, 1],
                                           padding=[0, 0], dilation=[1, 1], groups=1,
                                           bias=True)  # Model::Model/Detect[model]/Detect[24]/Conv2d[m]/ModuleList[2]/15405
         self.stride = torch.tensor([ 8., 16., 32.]) #####
