@@ -333,12 +333,26 @@ class Model(torch.nn.Module):
         self.module_231 = torch.nn.Conv2d(in_channels=384, out_channels=384, kernel_size=[3, 3], stride=[1, 1], padding=[1, 1], dilation=[1, 1], groups=1, bias=False) #Model::Model/C3[model]/C3[23]/Sequential[m]/Bottleneck[1]/Conv[cv2]/Conv2d[conv]/input.449
         self.module_232 = torch.nn.BatchNorm2d(num_features=384, eps=0.001, momentum=0.03) #Model::Model/C3[model]/C3[23]/Sequential[m]/Bottleneck[1]/Conv[cv2]/torch.nn.BatchNorm2d2d[bn]/input.451
         self.module_233 = torch.nn.LeakyReLU(negative_slope=0.1015625, inplace=True) #Model::Model/C3[model]/C3[23]/Sequential[m]/Bottleneck[1]/Conv[cv2]/LeakyReLU[act]/15291
-        #out_channels = (classes + 5)x3
-        self.module_240 = torch.nn.Conv2d(in_channels=192, out_channels=(7+5)*3, kernel_size=[1, 1], stride=[1, 1], padding=[0, 0], dilation=[1, 1], groups=1, bias=True) #Model::Model/Detect[model]/Detect[24]/Conv2d[m]/ModuleList[0]/15367
-        self.module_241 = torch.nn.Conv2d(in_channels=384, out_channels=(7+5)*3, kernel_size=[1, 1], stride=[1, 1], padding=[0, 0], dilation=[1, 1], groups=1, bias=True) #Model::Model/Detect[model]/Detect[24]/Conv2d[m]/ModuleList[1]/15386
-        self.module_242 = torch.nn.Conv2d(in_channels=768, out_channels=(7+5)*3, kernel_size=[1, 1], stride=[1, 1], padding=[0, 0], dilation=[1, 1], groups=1, bias=True) #Model::Model/Detect[model]/Detect[24]/Conv2d[m]/ModuleList[2]/15405
+        self.module_240 = torch.nn.Conv2d(in_channels=192, out_channels=36, kernel_size=[1, 1], stride=[1, 1], padding=[0, 0], dilation=[1, 1], groups=1, bias=True) #Model::Model/Detect[model]/Detect[24]/Conv2d[m]/ModuleList[0]/15367
+        self.module_241 = torch.nn.Conv2d(in_channels=384, out_channels=36, kernel_size=[1, 1], stride=[1, 1], padding=[0, 0], dilation=[1, 1], groups=1, bias=True) #Model::Model/Detect[model]/Detect[24]/Conv2d[m]/ModuleList[1]/15386
+        self.module_242 = torch.nn.Conv2d(in_channels=768, out_channels=36, kernel_size=[1, 1], stride=[1, 1], padding=[0, 0], dilation=[1, 1], groups=1, bias=True) #Model::Model/Detect[model]/Detect[24]/Conv2d[m]/ModuleList[2]/15405
         self.stride = torch.tensor([8., 16., 32.])  #####
-        self.names = ['Motor Vehicle','Non-motorized Vehicle','Pedestrian','Traffic Light-Red Light' ,'Traffic Light-Yellow Light','Traffic Light-Green Light' ,'Traffic Light-Off']  # class names
+        self.names = ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat',
+                      'traffic light',
+                      'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep',
+                      'cow',
+                      'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie', 'suitcase',
+                      'frisbee',
+                      'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard',
+                      'surfboard',
+                      'tennis racket', 'bottle', 'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl', 'banana',
+                      'apple',
+                      'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch',
+                      'potted plant', 'bed', 'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote', 'keyboard',
+                      'cell phone',
+                      'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors',
+                      'teddy bear',
+                      'hair drier', 'toothbrush']
         self.add_244 = functional.Add()
         self.add_245 = functional.Add()
         self.add_246 = functional.Add()

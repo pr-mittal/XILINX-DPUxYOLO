@@ -219,7 +219,7 @@ class Yolo_dataset(Dataset):
     def __init__(self, path, img_size=640, batch_size=16, augment=False, hyp=None, rect=False, image_weights=False,
                  stride=32, pad=0.0):
         try:
-            path = str(Path(path))
+            # path = str(Path(path))
             try:
                 self.img_files=[path+"/images/"+x for x in os.listdir(path+"/images") if '.'+x.split('.')[-1] in img_formats]
             except Exception:

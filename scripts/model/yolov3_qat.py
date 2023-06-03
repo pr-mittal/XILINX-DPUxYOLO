@@ -29,7 +29,7 @@ from copy import deepcopy
 from utils.datasets import Yolo_dataset
 from cfg import Cfg
 from torch.cuda import amp
-from models.models import ofa_yolo_30
+from models.models import ofa_yolo_0
 from functools import partial
 
 import yaml
@@ -109,7 +109,8 @@ def train(model, device, cfg,nndct_quant=False):
         qat_processor = QatProcessor(model, (im,), bitwidth=8, mix_bit=False)
         calib_dir = cfg.qt_dir
         post_method = model.m.method
-        model = qat_processor.trainable_model(calib_dir=calib_dir)
+        # model = qat_processor.trainable_model(calib_dir=calib_dir)
+        model = qat_processor.trainable_model()
         ori_forward = model.forward
         def forward(x):
             out = ori_forward(x)
@@ -349,7 +350,7 @@ def get_args(**kwargs):
     parser.add_argument('--save-period', type=int, default=-1, help='Save checkpoint every x epochs (disabled if < 1)')
     parser.add_argument('--nndct_quant', action='store_true', help='Train nndct QAT model')
     parser.add_argument('--qat_group', action='store_true', help='param groups')
-    parser.add_argument('--ratio', default=30, help='pruning ratio')
+    parser.add_argument('--ratio', default=0, help='pruning ratio')
     parser.add_argument('--num_worker', default=8, help='number of workers')
     parser.add_argument('--conf-thres', type=float, default=0.001, help='confidence threshold')
     parser.add_argument('--iou-thres', type=float, default=0.65, help='NMS IoU threshold')
@@ -422,16 +423,16 @@ if __name__ == "__main__":
         with open(pretrained_ofa_model, 'rb') as f:
             checkpoint = torch.load(f, map_location='cpu')
         anchors_weight = checkpoint['anchors']
-        if cfg.ratio == 30:
-            model = ofa_yolo_30(anchors, anchors_weight)
+        if cfg.ratio == 0:
+            model = ofa_yolo_0(anchors, anchors_weight)
         # model = Model(anchors, anchors_weight)
         del checkpoint['anchors']
         model.model.load_state_dict(checkpoint, strict=True)
         print(f'load successfully: ratio:{cfg.ratio};  pretrained:{pretrained_ofa_model}')
         model = model.to(device)
     else:
-        if cfg.ratio == 30:
-            model = ofa_yolo_30(anchors)
+        if cfg.ratio == 0:
+            model = ofa_yolo_0(anchors)
         model = model.to(device)
 
     try:

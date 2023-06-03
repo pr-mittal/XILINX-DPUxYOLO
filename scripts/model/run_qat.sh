@@ -13,8 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-CUDA_VISIBLE_DEVICES='0' python yolov3_qat.py --batch-size 16 --epoch 60 --gpu 1 --log_dir ./build/log_yolov3_qat_0 --save-dir ./build/yolov3_qat_0 --save-period 1 --nndct_quant -pretrained ./build/float_model/yolo_base_0.pth --qt_dir ./build/nndct_quant_0
+CUDA_VISIBLE_DEVICES='0' python yolov3_qat.py --batch-size 16 --epoch 60 --gpu 1 --log_dir ./build/log/log_yolov3_qat_0 --save-dir ./build/yolov3_qat_0 --save-period 1 --nndct_quant -pretrained ./build/float_model/yolo_base_0.pth --qt_dir ./build/quantized/nndct_quant_0
 
-#CUDA_VISIBLE_DEVICES='0' python yolov3_qat.py --batch-size 16 --epoch 60 --gpu 1 --log_dir ./build/log_yolov3_qat_30 --save-dir ./build/yolov3_qat_30 --save-period 1 --nndct_quant -pretrained /group/modelzoo/internal-cooperation-models/pytorch/ofa_yolo/float/yolo_base_30.pth --qt_dir ./build/nndct_quant_30
+#CUDA_VISIBLE_DEVICES='0' python yolov3_qat.py --batch-size 16 --epoch 60 --gpu 1 --log_dir ./build/log/log_yolov3_qat_30 --save-dir ./build/yolov3_qat_30 --save-period 1 --nndct_quant -pretrained /group/modelzoo/internal-cooperation-models/pytorch/ofa_yolo/float/yolo_base_30.pth --qt_dir ./build/quantized/nndct_quant_30
 
-#CUDA_VISIBLE_DEVICES='0' python yolov3_qat.py --batch-size 16 --epoch 60 --gpu 1 --log_dir ./build/log_yolov3_qat_50 --save-dir ./build/yolov3_qat_50 --save-period 1 --nndct_quant -pretrained /group/modelzoo/internal-cooperation-models/pytorch/ofa_yolo/float/yolo_base_50.pth --qt_dir ./build/nndct_quant_50
+#CUDA_VISIBLE_DEVICES='0' python yolov3_qat.py --batch-size 16 --epoch 60 --gpu 1 --log_dir ./build/log/log_yolov3_qat_50 --save-dir ./build/yolov3_qat_50 --save-period 1 --nndct_quant -pretrained /group/modelzoo/internal-cooperation-models/pytorch/ofa_yolo/float/yolo_base_50.pth --qt_dir ./build/quantized/nndct_quant_50
