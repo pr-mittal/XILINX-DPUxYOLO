@@ -21,3 +21,6 @@ scripts/model/archive/*
 scripts/model/build/log*
 *.pth
 *.xmodel
+*.pt
+scripts/model2/code/datasets/*
+

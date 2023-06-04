@@ -31,7 +31,7 @@ class ExpKITTIDeploy(BaseExp):
         super().__init__()
 
         # ---------------- model config ---------------- #
-        self.num_classes = 1
+        self.num_classes = 7
         self.depth = 1.00
         self.width = 1.00
         self.act = 'lrelu'
@@ -47,9 +47,11 @@ class ExpKITTIDeploy(BaseExp):
         # You can uncomment this line to specify a multiscale range
         # self.random_size = (14, 26)
         self.data_dir = None
-        self.train_set = "train.txt"
-        self.val_set = "val.txt"
-
+        # self.train_set = "train.txt"
+        # self.val_set = "val.txt"
+        self.train_ann = "instances_train2017.json"
+        self.val_ann = "instances_val2017.json"
+        self.test_ann = "instances_test2017.json"
         # --------------- transform config ----------------- #
         self.mosaic_prob = 1.0
         self.mixup_prob = 1.0
@@ -109,7 +111,7 @@ class ExpKITTIDeploy(BaseExp):
         self, batch_size, is_distributed, no_aug=False, cache_img=False
     ):
         from yolox.data import (
-            KITTIDetection,
+            COCODataset,
             TrainTransform,
             YoloBatchSampler,
             DataLoader,
@@ -125,7 +127,7 @@ class ExpKITTIDeploy(BaseExp):
         local_rank = get_local_rank()
 
         with wait_for_the_master(local_rank):
-            dataset = KITTIDetection(
+            dataset = COCODataset(
                 data_dir=self.data_dir,
                 image_set=self.train_set,
                 img_size=self.input_size,
@@ -255,12 +257,12 @@ class ExpKITTIDeploy(BaseExp):
         return scheduler
 
     def get_eval_loader(self, batch_size, is_distributed, testdev=False, legacy=False):
-        from yolox.data import KITTIDetection, ValTransform
+        from yolox.data import COCODataset, ValTransform
 
-        valdataset = KITTIDetection(
+        valdataset = COCODataset(
             data_dir=self.data_dir,
-            image_set=self.val_set,
-            dataset_name="kitti_val",
+            json_file=self.val_ann if not testdev else self.test_ann,
+            name="val2017" if not testdev else "test2017",
             img_size=self.test_size,
             preproc=ValTransform(legacy=legacy),
         )

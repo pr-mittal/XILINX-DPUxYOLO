@@ -11,17 +11,27 @@ conda activate vitis-ai-pytorch
 
 #getting errors do doing pip requirements
 # pip install -r requirements.txt
-pip install pycocotools
+pip install pycocotools thop tensorboard
 
 # folders
 export BUILD=./build
 export LOG=${BUILD}/logs
 mkdir -p ${LOG}
+export PYTHONPATH=./code
 
-./run_qat.sh
-./run_quant.sh
-./run_qat_test.sh
-./run_test.sh
+### Train/Eval/QAT
+# 1. Evaluation
+#   - Execute run_eval.sh.
+bash code/run_eval.sh
+# 2. Training
+bash code/run_train.sh
+# 3. Model quantization and xmodel dumping
+bash code/run_quant.sh
+# 4. QAT(Quantization-Aware-Training), model converting and xmodel dumping
+#   - Configure the variables and in `code/run_qat.sh`, read the steps(including QAT, model testing, model converting and xmodel dumping) in the script and run the step you want.
+bash code/run_qat.sh
+
+### 
 # # compile for target boards
 # source compile.sh zcu102 ${BUILD} ${LOG}
 # source compile.sh zcu104 ${BUILD} ${LOG}

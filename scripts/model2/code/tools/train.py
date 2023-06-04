@@ -14,6 +14,7 @@
 #!/usr/bin/env python3
 # -*- coding:utf-8 -*-
 # Copyright (c) Megvii, Inc. and its affiliates.
+# importing sys
 
 import argparse
 import random
@@ -125,7 +126,8 @@ def main(exp, args):
 
 if __name__ == "__main__":
     args = make_parser().parse_args()
-    exp = get_exp(args.exp_file, args.name)
+    # print(args.exp_file, args.name)
+    exp = get_exp(args.exp_file, args.name) 
     exp.merge(args.opts)
 
     if not args.experiment_name:

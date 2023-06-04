@@ -1,0 +1,680 @@
+2023-06-04 01:04:00.160 | INFO     | yolox.core.trainer:before_train:141 - args: Namespace(batch_size=1, cache=False, ckpt=None, devices=None, dist_backend='nccl', dist_url=None, exp_file='exps/default/yolox_s_deploy.py', experiment_name='yolox_s_deploy', fp16=False, machine_rank=0, name=None, num_machines=1, occupy=True, opts=[], resume=False, start_epoch=None)
+2023-06-04 01:04:00.166 | INFO     | yolox.core.trainer:before_train:142 - exp value:
+╒══════════════════╤═══════════════════╕
+│ keys             │ values            │
+╞══════════════════╪═══════════════════╡
+│ seed             │ None              │
+├──────────────────┼───────────────────┤
+│ output_dir       │ './YOLOX_outputs' │
+├──────────────────┼───────────────────┤
+│ print_interval   │ 10                │
+├──────────────────┼───────────────────┤
+│ eval_interval    │ 10                │
+├──────────────────┼───────────────────┤
+│ num_classes      │ 1                 │
+├──────────────────┼───────────────────┤
+│ depth            │ 0.33              │
+├──────────────────┼───────────────────┤
+│ width            │ 0.5               │
+├──────────────────┼───────────────────┤
+│ act              │ 'lrelu'           │
+├──────────────────┼───────────────────┤
+│ data_num_workers │ 4                 │
+├──────────────────┼───────────────────┤
+│ input_size       │ (384, 1248)       │
+├──────────────────┼───────────────────┤
+│ multiscale_range │ 5                 │
+├──────────────────┼───────────────────┤
+│ data_dir         │ None              │
+├──────────────────┼───────────────────┤
+│ train_set        │ 'train.txt'       │
+├──────────────────┼───────────────────┤
+│ val_set          │ 'val.txt'         │
+├──────────────────┼───────────────────┤
+│ mosaic_prob      │ 1.0               │
+├──────────────────┼───────────────────┤
+│ mixup_prob       │ 1.0               │
+├──────────────────┼───────────────────┤
+│ hsv_prob         │ 1.0               │
+├──────────────────┼───────────────────┤
+│ flip_prob        │ 0.5               │
+├──────────────────┼───────────────────┤
+│ degrees          │ 10.0              │
+├──────────────────┼───────────────────┤
+│ translate        │ 0.1               │
+├──────────────────┼───────────────────┤
+│ mosaic_scale     │ (0.1, 2)          │
+├──────────────────┼───────────────────┤
+│ mixup_scale      │ (0.5, 1.5)        │
+├──────────────────┼───────────────────┤
+│ shear            │ 2.0               │
+├──────────────────┼───────────────────┤
+│ enable_mixup     │ True              │
+├──────────────────┼───────────────────┤
+│ warmup_epochs    │ 5                 │
+├──────────────────┼───────────────────┤
+│ max_epoch        │ 300               │
+├──────────────────┼───────────────────┤
+│ warmup_lr        │ 0                 │
+├──────────────────┼───────────────────┤
+│ basic_lr_per_img │ 0.00015625        │
+├──────────────────┼───────────────────┤
+│ scheduler        │ 'yoloxwarmcos'    │
+├──────────────────┼───────────────────┤
+│ no_aug_epochs    │ 15                │
+├──────────────────┼───────────────────┤
+│ min_lr_ratio     │ 0.05              │
+├──────────────────┼───────────────────┤
+│ ema              │ True              │
+├──────────────────┼───────────────────┤
+│ weight_decay     │ 0.0005            │
+├──────────────────┼───────────────────┤
+│ momentum         │ 0.9               │
+├──────────────────┼───────────────────┤
+│ exp_name         │ 'yolox_s_deploy'  │
+├──────────────────┼───────────────────┤
+│ test_size        │ (384, 1248)       │
+├──────────────────┼───────────────────┤
+│ test_conf        │ 0.01              │
+├──────────────────┼───────────────────┤
+│ nmsthre          │ 0.65              │
+╘══════════════════╧═══════════════════╛
+2023-06-04 01:04:00.167 | ERROR    | yolox.core.launch:launch:98 - An error has been caught in function 'launch', process 'MainProcess' (392), thread 'MainThread' (140124546049856):
+Traceback (most recent call last):
+
+  File "tools/train.py", line 146, in <module>
+    args=(exp, args),
+          │    └ Namespace(batch_size=1, cache=False, ckpt=None, devices=None, dist_backend='nccl', dist_url=None, exp_file='exps/default/yolo...
+          └ ╒══════════════════╤═══════════════════╕
+            │ keys             │ values            │
+            ╞══════════════════╪═══════════════════╡
+            │ ...
+
+> File "/workspace/code/yolox/core/launch.py", line 98, in launch
+    main_func(*args)
+    │          └ (╒══════════════════╤═══════════════════╕
+    │            │ keys             │ values            │
+    │            ╞══════════════════╪═══════════════════╡
+    │            │...
+    └ <function main at 0x7f71496e4b00>
+
+  File "tools/train.py", line 124, in main
+    trainer.train()
+    │       └ <function Trainer.train at 0x7f71190c7320>
+    └ <yolox.core.trainer.Trainer object at 0x7f70f3769550>
+
+  File "/workspace/code/yolox/core/trainer.py", line 85, in train
+    self.before_train()
+    │    └ <function Trainer.before_train at 0x7f710a8af440>
+    └ <yolox.core.trainer.Trainer object at 0x7f70f3769550>
+
+  File "/workspace/code/yolox/core/trainer.py", line 145, in before_train
+    torch.cuda.set_device(self.local_rank)
+    │     │    │          │    └ 0
+    │     │    │          └ <yolox.core.trainer.Trainer object at 0x7f70f3769550>
+    │     │    └ <function set_device at 0x7f7119499950>
+    │     └ <module 'torch.cuda' from '/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/cuda/__init__.py'>
+    └ <module 'torch' from '/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/__init__.py'>
+
+  File "/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/cuda/__init__.py", line 314, in set_device
+    torch._C._cuda_setDevice(device)
+    │     │                  └ 0
+    │     └ <module 'torch._C' from '/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/_C.cpython-37m-x86_64-li...
+    └ <module 'torch' from '/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/__init__.py'>
+
+AttributeError: module 'torch._C' has no attribute '_cuda_setDevice'
+2023-06-04 01:08:26.531 | INFO     | yolox.core.trainer:before_train:141 - args: Namespace(batch_size=1, cache=False, ckpt=None, devices=None, dist_backend='nccl', dist_url=None, exp_file='exps/default/yolox_s_deploy.py', experiment_name='yolox_s_deploy', fp16=False, machine_rank=0, name=None, num_machines=1, occupy=True, opts=[], resume=False, start_epoch=None)
+2023-06-04 01:08:26.534 | INFO     | yolox.core.trainer:before_train:142 - exp value:
+╒══════════════════╤═══════════════════╕
+│ keys             │ values            │
+╞══════════════════╪═══════════════════╡
+│ seed             │ None              │
+├──────────────────┼───────────────────┤
+│ output_dir       │ './YOLOX_outputs' │
+├──────────────────┼───────────────────┤
+│ print_interval   │ 10                │
+├──────────────────┼───────────────────┤
+│ eval_interval    │ 10                │
+├──────────────────┼───────────────────┤
+│ num_classes      │ 1                 │
+├──────────────────┼───────────────────┤
+│ depth            │ 0.33              │
+├──────────────────┼───────────────────┤
+│ width            │ 0.5               │
+├──────────────────┼───────────────────┤
+│ act              │ 'lrelu'           │
+├──────────────────┼───────────────────┤
+│ data_num_workers │ 4                 │
+├──────────────────┼───────────────────┤
+│ input_size       │ (384, 1248)       │
+├──────────────────┼───────────────────┤
+│ multiscale_range │ 5                 │
+├──────────────────┼───────────────────┤
+│ data_dir         │ None              │
+├──────────────────┼───────────────────┤
+│ train_set        │ 'train.txt'       │
+├──────────────────┼───────────────────┤
+│ val_set          │ 'val.txt'         │
+├──────────────────┼───────────────────┤
+│ mosaic_prob      │ 1.0               │
+├──────────────────┼───────────────────┤
+│ mixup_prob       │ 1.0               │
+├──────────────────┼───────────────────┤
+│ hsv_prob         │ 1.0               │
+├──────────────────┼───────────────────┤
+│ flip_prob        │ 0.5               │
+├──────────────────┼───────────────────┤
+│ degrees          │ 10.0              │
+├──────────────────┼───────────────────┤
+│ translate        │ 0.1               │
+├──────────────────┼───────────────────┤
+│ mosaic_scale     │ (0.1, 2)          │
+├──────────────────┼───────────────────┤
+│ mixup_scale      │ (0.5, 1.5)        │
+├──────────────────┼───────────────────┤
+│ shear            │ 2.0               │
+├──────────────────┼───────────────────┤
+│ enable_mixup     │ True              │
+├──────────────────┼───────────────────┤
+│ warmup_epochs    │ 5                 │
+├──────────────────┼───────────────────┤
+│ max_epoch        │ 300               │
+├──────────────────┼───────────────────┤
+│ warmup_lr        │ 0                 │
+├──────────────────┼───────────────────┤
+│ basic_lr_per_img │ 0.00015625        │
+├──────────────────┼───────────────────┤
+│ scheduler        │ 'yoloxwarmcos'    │
+├──────────────────┼───────────────────┤
+│ no_aug_epochs    │ 15                │
+├──────────────────┼───────────────────┤
+│ min_lr_ratio     │ 0.05              │
+├──────────────────┼───────────────────┤
+│ ema              │ True              │
+├──────────────────┼───────────────────┤
+│ weight_decay     │ 0.0005            │
+├──────────────────┼───────────────────┤
+│ momentum         │ 0.9               │
+├──────────────────┼───────────────────┤
+│ exp_name         │ 'yolox_s_deploy'  │
+├──────────────────┼───────────────────┤
+│ test_size        │ (384, 1248)       │
+├──────────────────┼───────────────────┤
+│ test_conf        │ 0.01              │
+├──────────────────┼───────────────────┤
+│ nmsthre          │ 0.65              │
+╘══════════════════╧═══════════════════╛
+2023-06-04 01:08:28.359 | INFO     | yolox.core.trainer:before_train:148 - Model Summary: Params: 8.94M, Gflops: 30.68
+2023-06-04 01:08:28.500 | ERROR    | yolox.core.launch:launch:98 - An error has been caught in function 'launch', process 'MainProcess' (415), thread 'MainThread' (139950900856640):
+Traceback (most recent call last):
+
+  File "tools/train.py", line 146, in <module>
+    args=(exp, args),
+          │    └ Namespace(batch_size=1, cache=False, ckpt=None, devices=None, dist_backend='nccl', dist_url=None, exp_file='exps/default/yolo...
+          └ ╒══════════════════╤═════════════════════════════════════════════════════════════════════════════════════════════════════════...
+
+> File "/workspace/code/yolox/core/launch.py", line 98, in launch
+    main_func(*args)
+    │          └ (╒══════════════════╤════════════════════════════════════════════════════════════════════════════════════════════════════════...
+    └ <function main at 0x7f48db613170>
+
+  File "tools/train.py", line 124, in main
+    trainer.train()
+    │       └ <function Trainer.train at 0x7f489cdbca70>
+    └ <yolox.core.trainer.Trainer object at 0x7f4887d98450>
+
+  File "/workspace/code/yolox/core/trainer.py", line 85, in train
+    self.before_train()
+    │    └ <function Trainer.before_train at 0x7f489c81b680>
+    └ <yolox.core.trainer.Trainer object at 0x7f4887d98450>
+
+  File "/workspace/code/yolox/core/trainer.py", line 150, in before_train
+    model.to(self.device)
+    │     │  │    └ 'cuda:0'
+    │     │  └ <yolox.core.trainer.Trainer object at 0x7f4887d98450>
+    │     └ <function Module.to at 0x7f48ab25c0e0>
+    └ YOLOX(
+        (backbone): YOLOPAFPN(
+          (backbone): CSPDarknet(
+            (stem): FocusDeploy(
+              (conv): BaseConv(
+                (c...
+
+  File "/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/nn/modules/module.py", line 927, in to
+    return self._apply(convert)
+           │    │      └ <function Module.to.<locals>.convert at 0x7f48c2c3ef80>
+           │    └ <function Module._apply at 0x7f48ab255950>
+           └ YOLOX(
+               (backbone): YOLOPAFPN(
+                 (backbone): CSPDarknet(
+                   (stem): FocusDeploy(
+                     (conv): BaseConv(
+                       (c...
+  File "/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/nn/modules/module.py", line 579, in _apply
+    module._apply(fn)
+    │      │      └ <function Module.to.<locals>.convert at 0x7f48c2c3ef80>
+    │      └ <function Module._apply at 0x7f48ab255950>
+    └ YOLOPAFPN(
+        (backbone): CSPDarknet(
+          (stem): FocusDeploy(
+            (conv): BaseConv(
+              (conv): Conv2d(3, 32, kernel_si...
+  File "/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/nn/modules/module.py", line 579, in _apply
+    module._apply(fn)
+    │      │      └ <function Module.to.<locals>.convert at 0x7f48c2c3ef80>
+    │      └ <function Module._apply at 0x7f48ab255950>
+    └ CSPDarknet(
+        (stem): FocusDeploy(
+          (conv): BaseConv(
+            (conv): Conv2d(3, 32, kernel_size=(3, 3), stride=(2, 2), paddi...
+  File "/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/nn/modules/module.py", line 579, in _apply
+    module._apply(fn)
+    │      │      └ <function Module.to.<locals>.convert at 0x7f48c2c3ef80>
+    │      └ <function Module._apply at 0x7f48ab255950>
+    └ FocusDeploy(
+        (conv): BaseConv(
+          (conv): Conv2d(3, 32, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+         ...
+  [Previous line repeated 2 more times]
+  File "/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/nn/modules/module.py", line 602, in _apply
+    param_applied = fn(param)
+                    │  └ Parameter containing:
+                    │    tensor([[[[-1.8152e-01,  9.9600e-02, -1.9219e-01],
+                    │              [-1.1324e-02,  7.0558e-02,  1.7751e-02],
+                    │     ...
+                    └ <function Module.to.<locals>.convert at 0x7f48c2c3ef80>
+  File "/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/nn/modules/module.py", line 925, in convert
+    return t.to(device, dtype if t.is_floating_point() or t.is_complex() else None, non_blocking)
+           │ │  │       │        │ │                      │ │                       └ False
+           │ │  │       │        │ │                      │ └ <method 'is_complex' of 'torch._C._TensorBase' objects>
+           │ │  │       │        │ │                      └ Parameter containing:
+           │ │  │       │        │ │                        tensor([[[[-1.8152e-01,  9.9600e-02, -1.9219e-01],
+           │ │  │       │        │ │                                  [-1.1324e-02,  7.0558e-02,  1.7751e-02],
+           │ │  │       │        │ │                         ...
+           │ │  │       │        │ └ <method 'is_floating_point' of 'torch._C._TensorBase' objects>
+           │ │  │       │        └ Parameter containing:
+           │ │  │       │          tensor([[[[-1.8152e-01,  9.9600e-02, -1.9219e-01],
+           │ │  │       │                    [-1.1324e-02,  7.0558e-02,  1.7751e-02],
+           │ │  │       │           ...
+           │ │  │       └ None
+           │ │  └ device(type='cuda', index=0)
+           │ └ <method 'to' of 'torch._C._TensorBase' objects>
+           └ Parameter containing:
+             tensor([[[[-1.8152e-01,  9.9600e-02, -1.9219e-01],
+                       [-1.1324e-02,  7.0558e-02,  1.7751e-02],
+              ...
+  File "/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/cuda/__init__.py", line 211, in _lazy_init
+    raise AssertionError("Torch not compiled with CUDA enabled")
+
+AssertionError: Torch not compiled with CUDA enabled
+2023-06-04 01:17:27.785 | INFO     | yolox.core.trainer:before_train:141 - args: Namespace(batch_size=1, cache=False, ckpt=None, devices=0, dist_backend='nccl', dist_url=None, exp_file='exps/default/yolox_s_deploy.py', experiment_name='yolox_s_deploy', fp16=False, machine_rank=0, name=None, num_machines=1, occupy=True, opts=[], resume=False, start_epoch=None)
+2023-06-04 01:17:27.788 | INFO     | yolox.core.trainer:before_train:142 - exp value:
+╒══════════════════╤═══════════════════╕
+│ keys             │ values            │
+╞══════════════════╪═══════════════════╡
+│ seed             │ None              │
+├──────────────────┼───────────────────┤
+│ output_dir       │ './YOLOX_outputs' │
+├──────────────────┼───────────────────┤
+│ print_interval   │ 10                │
+├──────────────────┼───────────────────┤
+│ eval_interval    │ 10                │
+├──────────────────┼───────────────────┤
+│ num_classes      │ 1                 │
+├──────────────────┼───────────────────┤
+│ depth            │ 0.33              │
+├──────────────────┼───────────────────┤
+│ width            │ 0.5               │
+├──────────────────┼───────────────────┤
+│ act              │ 'lrelu'           │
+├──────────────────┼───────────────────┤
+│ data_num_workers │ 4                 │
+├──────────────────┼───────────────────┤
+│ input_size       │ (384, 1248)       │
+├──────────────────┼───────────────────┤
+│ multiscale_range │ 5                 │
+├──────────────────┼───────────────────┤
+│ data_dir         │ None              │
+├──────────────────┼───────────────────┤
+│ train_set        │ 'train.txt'       │
+├──────────────────┼───────────────────┤
+│ val_set          │ 'val.txt'         │
+├──────────────────┼───────────────────┤
+│ mosaic_prob      │ 1.0               │
+├──────────────────┼───────────────────┤
+│ mixup_prob       │ 1.0               │
+├──────────────────┼───────────────────┤
+│ hsv_prob         │ 1.0               │
+├──────────────────┼───────────────────┤
+│ flip_prob        │ 0.5               │
+├──────────────────┼───────────────────┤
+│ degrees          │ 10.0              │
+├──────────────────┼───────────────────┤
+│ translate        │ 0.1               │
+├──────────────────┼───────────────────┤
+│ mosaic_scale     │ (0.1, 2)          │
+├──────────────────┼───────────────────┤
+│ mixup_scale      │ (0.5, 1.5)        │
+├──────────────────┼───────────────────┤
+│ shear            │ 2.0               │
+├──────────────────┼───────────────────┤
+│ enable_mixup     │ True              │
+├──────────────────┼───────────────────┤
+│ warmup_epochs    │ 5                 │
+├──────────────────┼───────────────────┤
+│ max_epoch        │ 300               │
+├──────────────────┼───────────────────┤
+│ warmup_lr        │ 0                 │
+├──────────────────┼───────────────────┤
+│ basic_lr_per_img │ 0.00015625        │
+├──────────────────┼───────────────────┤
+│ scheduler        │ 'yoloxwarmcos'    │
+├──────────────────┼───────────────────┤
+│ no_aug_epochs    │ 15                │
+├──────────────────┼───────────────────┤
+│ min_lr_ratio     │ 0.05              │
+├──────────────────┼───────────────────┤
+│ ema              │ True              │
+├──────────────────┼───────────────────┤
+│ weight_decay     │ 0.0005            │
+├──────────────────┼───────────────────┤
+│ momentum         │ 0.9               │
+├──────────────────┼───────────────────┤
+│ exp_name         │ 'yolox_s_deploy'  │
+├──────────────────┼───────────────────┤
+│ test_size        │ (384, 1248)       │
+├──────────────────┼───────────────────┤
+│ test_conf        │ 0.01              │
+├──────────────────┼───────────────────┤
+│ nmsthre          │ 0.65              │
+╘══════════════════╧═══════════════════╛
+2023-06-04 01:17:27.789 | ERROR    | yolox.core.launch:launch:98 - An error has been caught in function 'launch', process 'MainProcess' (452), thread 'MainThread' (139643977074496):
+Traceback (most recent call last):
+
+  File "tools/train.py", line 146, in <module>
+    args=(exp, args),
+          │    └ Namespace(batch_size=1, cache=False, ckpt=None, devices=0, dist_backend='nccl', dist_url=None, exp_file='exps/default/yolox_s...
+          └ ╒══════════════════╤═══════════════════╕
+            │ keys             │ values            │
+            ╞══════════════════╪═══════════════════╡
+            │ ...
+
+> File "/workspace/code/yolox/core/launch.py", line 98, in launch
+    main_func(*args)
+    │          └ (╒══════════════════╤═══════════════════╕
+    │            │ keys             │ values            │
+    │            ╞══════════════════╪═══════════════════╡
+    │            │...
+    └ <function main at 0x7f01654bf170>
+
+  File "tools/train.py", line 124, in main
+    trainer.train()
+    │       └ <function Trainer.train at 0x7f0134e7da70>
+    └ <yolox.core.trainer.Trainer object at 0x7f0111c47490>
+
+  File "/workspace/code/yolox/core/trainer.py", line 85, in train
+    self.before_train()
+    │    └ <function Trainer.before_train at 0x7f01266b6680>
+    └ <yolox.core.trainer.Trainer object at 0x7f0111c47490>
+
+  File "/workspace/code/yolox/core/trainer.py", line 145, in before_train
+    torch.cuda.set_device(self.local_rank)
+    │     │    │          │    └ 0
+    │     │    │          └ <yolox.core.trainer.Trainer object at 0x7f0111c47490>
+    │     │    └ <function set_device at 0x7f013524f950>
+    │     └ <module 'torch.cuda' from '/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/cuda/__init__.py'>
+    └ <module 'torch' from '/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/__init__.py'>
+
+  File "/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/cuda/__init__.py", line 314, in set_device
+    torch._C._cuda_setDevice(device)
+    │     │                  └ 0
+    │     └ <module 'torch._C' from '/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/_C.cpython-37m-x86_64-li...
+    └ <module 'torch' from '/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/__init__.py'>
+
+AttributeError: module 'torch._C' has no attribute '_cuda_setDevice'
+2023-06-04 01:25:56.465 | INFO     | yolox.core.trainer:before_train:141 - args: Namespace(batch_size=1, cache=False, ckpt=None, devices=0, dist_backend='nccl', dist_url=None, exp_file='exps/default/yolox_s_deploy.py', experiment_name='yolox_s_deploy', fp16=False, machine_rank=0, name=None, num_machines=1, occupy=True, opts=[], resume=False, start_epoch=None)
+2023-06-04 01:25:56.468 | INFO     | yolox.core.trainer:before_train:142 - exp value:
+╒══════════════════╤═══════════════════╕
+│ keys             │ values            │
+╞══════════════════╪═══════════════════╡
+│ seed             │ None              │
+├──────────────────┼───────────────────┤
+│ output_dir       │ './YOLOX_outputs' │
+├──────────────────┼───────────────────┤
+│ print_interval   │ 10                │
+├──────────────────┼───────────────────┤
+│ eval_interval    │ 10                │
+├──────────────────┼───────────────────┤
+│ num_classes      │ 1                 │
+├──────────────────┼───────────────────┤
+│ depth            │ 0.33              │
+├──────────────────┼───────────────────┤
+│ width            │ 0.5               │
+├──────────────────┼───────────────────┤
+│ act              │ 'lrelu'           │
+├──────────────────┼───────────────────┤
+│ data_num_workers │ 4                 │
+├──────────────────┼───────────────────┤
+│ input_size       │ (384, 1248)       │
+├──────────────────┼───────────────────┤
+│ multiscale_range │ 5                 │
+├──────────────────┼───────────────────┤
+│ data_dir         │ None              │
+├──────────────────┼───────────────────┤
+│ train_set        │ 'train.txt'       │
+├──────────────────┼───────────────────┤
+│ val_set          │ 'val.txt'         │
+├──────────────────┼───────────────────┤
+│ mosaic_prob      │ 1.0               │
+├──────────────────┼───────────────────┤
+│ mixup_prob       │ 1.0               │
+├──────────────────┼───────────────────┤
+│ hsv_prob         │ 1.0               │
+├──────────────────┼───────────────────┤
+│ flip_prob        │ 0.5               │
+├──────────────────┼───────────────────┤
+│ degrees          │ 10.0              │
+├──────────────────┼───────────────────┤
+│ translate        │ 0.1               │
+├──────────────────┼───────────────────┤
+│ mosaic_scale     │ (0.1, 2)          │
+├──────────────────┼───────────────────┤
+│ mixup_scale      │ (0.5, 1.5)        │
+├──────────────────┼───────────────────┤
+│ shear            │ 2.0               │
+├──────────────────┼───────────────────┤
+│ enable_mixup     │ True              │
+├──────────────────┼───────────────────┤
+│ warmup_epochs    │ 5                 │
+├──────────────────┼───────────────────┤
+│ max_epoch        │ 300               │
+├──────────────────┼───────────────────┤
+│ warmup_lr        │ 0                 │
+├──────────────────┼───────────────────┤
+│ basic_lr_per_img │ 0.00015625        │
+├──────────────────┼───────────────────┤
+│ scheduler        │ 'yoloxwarmcos'    │
+├──────────────────┼───────────────────┤
+│ no_aug_epochs    │ 15                │
+├──────────────────┼───────────────────┤
+│ min_lr_ratio     │ 0.05              │
+├──────────────────┼───────────────────┤
+│ ema              │ True              │
+├──────────────────┼───────────────────┤
+│ weight_decay     │ 0.0005            │
+├──────────────────┼───────────────────┤
+│ momentum         │ 0.9               │
+├──────────────────┼───────────────────┤
+│ exp_name         │ 'yolox_s_deploy'  │
+├──────────────────┼───────────────────┤
+│ test_size        │ (384, 1248)       │
+├──────────────────┼───────────────────┤
+│ test_conf        │ 0.01              │
+├──────────────────┼───────────────────┤
+│ nmsthre          │ 0.65              │
+╘══════════════════╧═══════════════════╛
+2023-06-04 01:25:56.468 | ERROR    | yolox.core.launch:launch:98 - An error has been caught in function 'launch', process 'MainProcess' (471), thread 'MainThread' (139683968948032):
+Traceback (most recent call last):
+
+  File "tools/train.py", line 147, in <module>
+    args=(exp, args),
+          │    └ Namespace(batch_size=1, cache=False, ckpt=None, devices=0, dist_backend='nccl', dist_url=None, exp_file='exps/default/yolox_s...
+          └ ╒══════════════════╤═══════════════════╕
+            │ keys             │ values            │
+            ╞══════════════════╪═══════════════════╡
+            │ ...
+
+> File "/workspace/code/yolox/core/launch.py", line 98, in launch
+    main_func(*args)
+    │          └ (╒══════════════════╤═══════════════════╕
+    │            │ keys             │ values            │
+    │            ╞══════════════════╪═══════════════════╡
+    │            │...
+    └ <function main at 0x7f0ab4ff7170>
+
+  File "tools/train.py", line 124, in main
+    trainer.train()
+    │       └ <function Trainer.train at 0x7f0a767a2a70>
+    └ <yolox.core.trainer.Trainer object at 0x7f0a6178e690>
+
+  File "/workspace/code/yolox/core/trainer.py", line 85, in train
+    self.before_train()
+    │    └ <function Trainer.before_train at 0x7f0a76200680>
+    └ <yolox.core.trainer.Trainer object at 0x7f0a6178e690>
+
+  File "/workspace/code/yolox/core/trainer.py", line 145, in before_train
+    torch.cuda.set_device(self.local_rank)
+    │     │    │          │    └ 0
+    │     │    │          └ <yolox.core.trainer.Trainer object at 0x7f0a6178e690>
+    │     │    └ <function set_device at 0x7f0a84d87950>
+    │     └ <module 'torch.cuda' from '/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/cuda/__init__.py'>
+    └ <module 'torch' from '/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/__init__.py'>
+
+  File "/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/cuda/__init__.py", line 314, in set_device
+    torch._C._cuda_setDevice(device)
+    │     │                  └ 0
+    │     └ <module 'torch._C' from '/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/_C.cpython-37m-x86_64-li...
+    └ <module 'torch' from '/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/__init__.py'>
+
+AttributeError: module 'torch._C' has no attribute '_cuda_setDevice'
+2023-06-04 02:05:02.066 | INFO     | yolox.core.trainer:before_train:141 - args: Namespace(batch_size=1, cache=False, ckpt=None, devices=0, dist_backend='nccl', dist_url=None, exp_file='exps/default/yolox_s_deploy.py', experiment_name='yolox_s_deploy', fp16=False, machine_rank=0, name=None, num_machines=1, occupy=True, opts=[], resume=False, start_epoch=None)
+2023-06-04 02:05:02.070 | INFO     | yolox.core.trainer:before_train:142 - exp value:
+╒══════════════════╤═══════════════════╕
+│ keys             │ values            │
+╞══════════════════╪═══════════════════╡
+│ seed             │ None              │
+├──────────────────┼───────────────────┤
+│ output_dir       │ './YOLOX_outputs' │
+├──────────────────┼───────────────────┤
+│ print_interval   │ 10                │
+├──────────────────┼───────────────────┤
+│ eval_interval    │ 10                │
+├──────────────────┼───────────────────┤
+│ num_classes      │ 7                 │
+├──────────────────┼───────────────────┤
+│ depth            │ 0.33              │
+├──────────────────┼───────────────────┤
+│ width            │ 0.5               │
+├──────────────────┼───────────────────┤
+│ act              │ 'lrelu'           │
+├──────────────────┼───────────────────┤
+│ data_num_workers │ 4                 │
+├──────────────────┼───────────────────┤
+│ input_size       │ (384, 1248)       │
+├──────────────────┼───────────────────┤
+│ multiscale_range │ 5                 │
+├──────────────────┼───────────────────┤
+│ data_dir         │ None              │
+├──────────────────┼───────────────────┤
+│ mosaic_prob      │ 1.0               │
+├──────────────────┼───────────────────┤
+│ mixup_prob       │ 1.0               │
+├──────────────────┼───────────────────┤
+│ hsv_prob         │ 1.0               │
+├──────────────────┼───────────────────┤
+│ flip_prob        │ 0.5               │
+├──────────────────┼───────────────────┤
+│ degrees          │ 10.0              │
+├──────────────────┼───────────────────┤
+│ translate        │ 0.1               │
+├──────────────────┼───────────────────┤
+│ mosaic_scale     │ (0.1, 2)          │
+├──────────────────┼───────────────────┤
+│ mixup_scale      │ (0.5, 1.5)        │
+├──────────────────┼───────────────────┤
+│ shear            │ 2.0               │
+├──────────────────┼───────────────────┤
+│ enable_mixup     │ True              │
+├──────────────────┼───────────────────┤
+│ warmup_epochs    │ 5                 │
+├──────────────────┼───────────────────┤
+│ max_epoch        │ 300               │
+├──────────────────┼───────────────────┤
+│ warmup_lr        │ 0                 │
+├──────────────────┼───────────────────┤
+│ basic_lr_per_img │ 0.00015625        │
+├──────────────────┼───────────────────┤
+│ scheduler        │ 'yoloxwarmcos'    │
+├──────────────────┼───────────────────┤
+│ no_aug_epochs    │ 15                │
+├──────────────────┼───────────────────┤
+│ min_lr_ratio     │ 0.05              │
+├──────────────────┼───────────────────┤
+│ ema              │ True              │
+├──────────────────┼───────────────────┤
+│ weight_decay     │ 0.0005            │
+├──────────────────┼───────────────────┤
+│ momentum         │ 0.9               │
+├──────────────────┼───────────────────┤
+│ exp_name         │ 'yolox_s_deploy'  │
+├──────────────────┼───────────────────┤
+│ test_size        │ (384, 1248)       │
+├──────────────────┼───────────────────┤
+│ test_conf        │ 0.01              │
+├──────────────────┼───────────────────┤
+│ nmsthre          │ 0.65              │
+╘══════════════════╧═══════════════════╛
+2023-06-04 02:05:02.071 | ERROR    | yolox.core.launch:launch:98 - An error has been caught in function 'launch', process 'MainProcess' (528), thread 'MainThread' (140361322923840):
+Traceback (most recent call last):
+
+  File "tools/train.py", line 147, in <module>
+    args=(exp, args),
+          │    └ Namespace(batch_size=1, cache=False, ckpt=None, devices=0, dist_backend='nccl', dist_url=None, exp_file='exps/default/yolox_s...
+          └ ╒══════════════════╤═══════════════════╕
+            │ keys             │ values            │
+            ╞══════════════════╪═══════════════════╡
+            │ ...
+
+> File "/workspace/code/yolox/core/launch.py", line 98, in launch
+    main_func(*args)
+    │          └ (╒══════════════════╤═══════════════════╕
+    │            │ keys             │ values            │
+    │            ╞══════════════════╪═══════════════════╡
+    │            │...
+    └ <function main at 0x7fa86a70f170>
+
+  File "tools/train.py", line 124, in main
+    trainer.train()
+    │       └ <function Trainer.train at 0x7fa83a0cda70>
+    └ <yolox.core.trainer.Trainer object at 0x7fa816fe2e50>
+
+  File "/workspace/code/yolox/core/trainer.py", line 85, in train
+    self.before_train()
+    │    └ <function Trainer.before_train at 0x7fa82b908200>
+    └ <yolox.core.trainer.Trainer object at 0x7fa816fe2e50>
+
+  File "/workspace/code/yolox/core/trainer.py", line 145, in before_train
+    torch.cuda.set_device(self.local_rank)
+    │     │    │          │    └ 0
+    │     │    │          └ <yolox.core.trainer.Trainer object at 0x7fa816fe2e50>
+    │     │    └ <function set_device at 0x7fa83a49f950>
+    │     └ <module 'torch.cuda' from '/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/cuda/__init__.py'>
+    └ <module 'torch' from '/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/__init__.py'>
+
+  File "/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/cuda/__init__.py", line 314, in set_device
+    torch._C._cuda_setDevice(device)
+    │     │                  └ 0
+    │     └ <module 'torch._C' from '/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/_C.cpython-37m-x86_64-li...
+    └ <module 'torch' from '/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/torch/__init__.py'>
+
+AttributeError: module 'torch._C' has no attribute '_cuda_setDevice'

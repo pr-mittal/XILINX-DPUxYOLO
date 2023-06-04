@@ -27,7 +27,9 @@ import time
 from loguru import logger
 
 import cv2
+
 import torch
+
 from yolox.data.data_augment import ValTransform
 from yolox.data.datasets import COCO_CLASSES
 from yolox.exp import get_exp
