@@ -37,8 +37,10 @@ from torch.optim import Adam, AdamW, SGD, lr_scheduler
 from utils.utils import labels_to_class_weights,check_anchors,compute_loss,fitness
 from utils import torch_utils
 from yolov3_test import evaluate
+torch.cuda.empty_cache()
 
 def train(model, device, cfg,nndct_quant=False):
+    # print(torch.cuda.memory_summary(device=None, abbreviated=False))
     epochs = cfg.epoch
     batch_size = cfg.batchsize
     lr0 = cfg.lr0
@@ -67,7 +69,7 @@ def train(model, device, cfg,nndct_quant=False):
     class_num = cfg.class_num
     train_image = cfg.data_path + cfg.train_image
     dataset = Yolo_dataset(train_image, imgsz, batch_size, hyp=cfg, augment=True, rect=cfg.rect)
-
+    # print(torch.cuda.memory_summary(device=None, abbreviated=False))
     # Use torch.utils.data.DataLoader() if dataset.properties will update during training else InfiniteDataLoader()
     dataloader = torch.utils.data.DataLoader(dataset,
                                              batch_size=batch_size,
@@ -75,7 +77,7 @@ def train(model, device, cfg,nndct_quant=False):
                                              pin_memory=True,
                                              collate_fn=dataset.collate_fn)
     nb = len(dataloader)
-
+    # print(torch.cuda.memory_summary(device=None, abbreviated=False))
     logging.info(f'''Starting training:
         Epochs:          {epochs}
         Batch size:      {batch_size}

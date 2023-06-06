@@ -129,7 +129,7 @@ class ExpKITTIDeploy(BaseExp):
         with wait_for_the_master(local_rank):
             dataset = COCODataset(
                 data_dir=self.data_dir,
-                image_set=self.train_set,
+                json_file=self.train_ann,
                 img_size=self.input_size,
                 preproc=TrainTransform(
                     max_labels=50,

@@ -1,0 +1,566 @@
+2023-06-05 11:38:55.521 | INFO     | yolox.core.trainer:before_train:141 - args: Namespace(batch_size=64, cache=False, ckpt=None, devices=None, dist_backend='nccl', dist_url=None, exp_file='code/exps/default/yolox_s_deploy.py', experiment_name='yolox_s_deploy', fp16=False, machine_rank=0, name=None, num_machines=1, occupy=True, opts=[], resume=False, start_epoch=None)
+2023-06-05 11:38:55.525 | INFO     | yolox.core.trainer:before_train:142 - exp value:
+╒══════════════════╤════════════════════════════╕
+│ keys             │ values                     │
+╞══════════════════╪════════════════════════════╡
+│ seed             │ None                       │
+├──────────────────┼────────────────────────────┤
+│ output_dir       │ './YOLOX_outputs'          │
+├──────────────────┼────────────────────────────┤
+│ print_interval   │ 10                         │
+├──────────────────┼────────────────────────────┤
+│ eval_interval    │ 10                         │
+├──────────────────┼────────────────────────────┤
+│ num_classes      │ 7                          │
+├──────────────────┼────────────────────────────┤
+│ depth            │ 0.33                       │
+├──────────────────┼────────────────────────────┤
+│ width            │ 0.5                        │
+├──────────────────┼────────────────────────────┤
+│ act              │ 'lrelu'                    │
+├──────────────────┼────────────────────────────┤
+│ data_num_workers │ 4                          │
+├──────────────────┼────────────────────────────┤
+│ input_size       │ (384, 1248)                │
+├──────────────────┼────────────────────────────┤
+│ multiscale_range │ 5                          │
+├──────────────────┼────────────────────────────┤
+│ data_dir         │ None                       │
+├──────────────────┼────────────────────────────┤
+│ train_ann        │ 'instances_train2017.json' │
+├──────────────────┼────────────────────────────┤
+│ val_ann          │ 'instances_val2017.json'   │
+├──────────────────┼────────────────────────────┤
+│ test_ann         │ 'instances_test2017.json'  │
+├──────────────────┼────────────────────────────┤
+│ mosaic_prob      │ 1.0                        │
+├──────────────────┼────────────────────────────┤
+│ mixup_prob       │ 1.0                        │
+├──────────────────┼────────────────────────────┤
+│ hsv_prob         │ 1.0                        │
+├──────────────────┼────────────────────────────┤
+│ flip_prob        │ 0.5                        │
+├──────────────────┼────────────────────────────┤
+│ degrees          │ 10.0                       │
+├──────────────────┼────────────────────────────┤
+│ translate        │ 0.1                        │
+├──────────────────┼────────────────────────────┤
+│ mosaic_scale     │ (0.1, 2)                   │
+├──────────────────┼────────────────────────────┤
+│ mixup_scale      │ (0.5, 1.5)                 │
+├──────────────────┼────────────────────────────┤
+│ shear            │ 2.0                        │
+├──────────────────┼────────────────────────────┤
+│ enable_mixup     │ True                       │
+├──────────────────┼────────────────────────────┤
+│ warmup_epochs    │ 5                          │
+├──────────────────┼────────────────────────────┤
+│ max_epoch        │ 300                        │
+├──────────────────┼────────────────────────────┤
+│ warmup_lr        │ 0                          │
+├──────────────────┼────────────────────────────┤
+│ basic_lr_per_img │ 0.00015625                 │
+├──────────────────┼────────────────────────────┤
+│ scheduler        │ 'yoloxwarmcos'             │
+├──────────────────┼────────────────────────────┤
+│ no_aug_epochs    │ 15                         │
+├──────────────────┼────────────────────────────┤
+│ min_lr_ratio     │ 0.05                       │
+├──────────────────┼────────────────────────────┤
+│ ema              │ True                       │
+├──────────────────┼────────────────────────────┤
+│ weight_decay     │ 0.0005                     │
+├──────────────────┼────────────────────────────┤
+│ momentum         │ 0.9                        │
+├──────────────────┼────────────────────────────┤
+│ exp_name         │ 'yolox_s_deploy'           │
+├──────────────────┼────────────────────────────┤
+│ test_size        │ (384, 1248)                │
+├──────────────────┼────────────────────────────┤
+│ test_conf        │ 0.01                       │
+├──────────────────┼────────────────────────────┤
+│ nmsthre          │ 0.65                       │
+╘══════════════════╧════════════════════════════╛
+2023-06-05 11:38:57.631 | INFO     | yolox.core.trainer:before_train:148 - Model Summary: Params: 8.94M, Gflops: 30.70
+2023-06-05 11:39:35.616 | ERROR    | yolox.core.launch:launch:98 - An error has been caught in function 'launch', process 'MainProcess' (201), thread 'MainThread' (139982610364224):
+Traceback (most recent call last):
+
+  File "code/tools/train.py", line 147, in <module>
+    args=(exp, args),
+          │    └ Namespace(batch_size=64, cache=False, ckpt=None, devices=None, dist_backend='nccl', dist_url=None, exp_file='code/exps/defaul...
+          └ ╒══════════════════╤═════════════════════════════════════════════════════════════════════════════════════════════════════════...
+
+> File "/workspace/code/yolox/core/launch.py", line 98, in launch
+    main_func(*args)
+    │          └ (╒══════════════════╤════════════════════════════════════════════════════════════════════════════════════════════════════════...
+    └ <function main at 0x7f503c3d38c0>
+
+  File "code/tools/train.py", line 124, in main
+    trainer.train()
+    │       └ <function Trainer.train at 0x7f4f8fdf4ef0>
+    └ <yolox.core.trainer.Trainer object at 0x7f4f7879ea10>
+
+  File "/workspace/code/yolox/core/trainer.py", line 85, in train
+    self.before_train()
+    │    └ <function Trainer.before_train at 0x7f4f8f83a950>
+    └ <yolox.core.trainer.Trainer object at 0x7f4f7879ea10>
+
+  File "/workspace/code/yolox/core/trainer.py", line 164, in before_train
+    cache_img=self.args.cache,
+              │    │    └ False
+              │    └ Namespace(batch_size=64, cache=False, ckpt=None, devices=None, dist_backend='nccl', dist_url=None, exp_file='code/exps/defaul...
+              └ <yolox.core.trainer.Trainer object at 0x7f4f7879ea10>
+
+  File "/workspace/code/yolox/exp/yolox_base_deploy.py", line 132, in get_data_loader
+    image_set=self.train_set,
+              └ ╒══════════════════╤═════════════════════════════════════════════════════════════════════════════════════════════════════════...
+
+AttributeError: 'Exp' object has no attribute 'train_set'
+2023-06-05 11:40:37.226 | INFO     | yolox.core.trainer:before_train:141 - args: Namespace(batch_size=64, cache=False, ckpt=None, devices=None, dist_backend='nccl', dist_url=None, exp_file='code/exps/default/yolox_s_deploy.py', experiment_name='yolox_s_deploy', fp16=False, machine_rank=0, name=None, num_machines=1, occupy=True, opts=[], resume=False, start_epoch=None)
+2023-06-05 11:40:37.232 | INFO     | yolox.core.trainer:before_train:142 - exp value:
+╒══════════════════╤════════════════════════════╕
+│ keys             │ values                     │
+╞══════════════════╪════════════════════════════╡
+│ seed             │ None                       │
+├──────────────────┼────────────────────────────┤
+│ output_dir       │ './YOLOX_outputs'          │
+├──────────────────┼────────────────────────────┤
+│ print_interval   │ 10                         │
+├──────────────────┼────────────────────────────┤
+│ eval_interval    │ 10                         │
+├──────────────────┼────────────────────────────┤
+│ num_classes      │ 7                          │
+├──────────────────┼────────────────────────────┤
+│ depth            │ 0.33                       │
+├──────────────────┼────────────────────────────┤
+│ width            │ 0.5                        │
+├──────────────────┼────────────────────────────┤
+│ act              │ 'lrelu'                    │
+├──────────────────┼────────────────────────────┤
+│ data_num_workers │ 4                          │
+├──────────────────┼────────────────────────────┤
+│ input_size       │ (384, 1248)                │
+├──────────────────┼────────────────────────────┤
+│ multiscale_range │ 5                          │
+├──────────────────┼────────────────────────────┤
+│ data_dir         │ None                       │
+├──────────────────┼────────────────────────────┤
+│ train_ann        │ 'instances_train2017.json' │
+├──────────────────┼────────────────────────────┤
+│ val_ann          │ 'instances_val2017.json'   │
+├──────────────────┼────────────────────────────┤
+│ test_ann         │ 'instances_test2017.json'  │
+├──────────────────┼────────────────────────────┤
+│ mosaic_prob      │ 1.0                        │
+├──────────────────┼────────────────────────────┤
+│ mixup_prob       │ 1.0                        │
+├──────────────────┼────────────────────────────┤
+│ hsv_prob         │ 1.0                        │
+├──────────────────┼────────────────────────────┤
+│ flip_prob        │ 0.5                        │
+├──────────────────┼────────────────────────────┤
+│ degrees          │ 10.0                       │
+├──────────────────┼────────────────────────────┤
+│ translate        │ 0.1                        │
+├──────────────────┼────────────────────────────┤
+│ mosaic_scale     │ (0.1, 2)                   │
+├──────────────────┼────────────────────────────┤
+│ mixup_scale      │ (0.5, 1.5)                 │
+├──────────────────┼────────────────────────────┤
+│ shear            │ 2.0                        │
+├──────────────────┼────────────────────────────┤
+│ enable_mixup     │ True                       │
+├──────────────────┼────────────────────────────┤
+│ warmup_epochs    │ 5                          │
+├──────────────────┼────────────────────────────┤
+│ max_epoch        │ 300                        │
+├──────────────────┼────────────────────────────┤
+│ warmup_lr        │ 0                          │
+├──────────────────┼────────────────────────────┤
+│ basic_lr_per_img │ 0.00015625                 │
+├──────────────────┼────────────────────────────┤
+│ scheduler        │ 'yoloxwarmcos'             │
+├──────────────────┼────────────────────────────┤
+│ no_aug_epochs    │ 15                         │
+├──────────────────┼────────────────────────────┤
+│ min_lr_ratio     │ 0.05                       │
+├──────────────────┼────────────────────────────┤
+│ ema              │ True                       │
+├──────────────────┼────────────────────────────┤
+│ weight_decay     │ 0.0005                     │
+├──────────────────┼────────────────────────────┤
+│ momentum         │ 0.9                        │
+├──────────────────┼────────────────────────────┤
+│ exp_name         │ 'yolox_s_deploy'           │
+├──────────────────┼────────────────────────────┤
+│ test_size        │ (384, 1248)                │
+├──────────────────┼────────────────────────────┤
+│ test_conf        │ 0.01                       │
+├──────────────────┼────────────────────────────┤
+│ nmsthre          │ 0.65                       │
+╘══════════════════╧════════════════════════════╛
+2023-06-05 11:40:37.474 | INFO     | yolox.core.trainer:before_train:148 - Model Summary: Params: 8.94M, Gflops: 30.70
+2023-06-05 11:40:38.670 | INFO     | yolox.data.datasets.coco:__init__:45 - loading annotations into memory...
+2023-06-05 11:40:38.671 | ERROR    | yolox.core.launch:launch:98 - An error has been caught in function 'launch', process 'MainProcess' (233), thread 'MainThread' (140591846639424):
+Traceback (most recent call last):
+
+  File "code/tools/train.py", line 147, in <module>
+    args=(exp, args),
+          │    └ Namespace(batch_size=64, cache=False, ckpt=None, devices=None, dist_backend='nccl', dist_url=None, exp_file='code/exps/defaul...
+          └ ╒══════════════════╤═════════════════════════════════════════════════════════════════════════════════════════════════════════...
+
+> File "/workspace/code/yolox/core/launch.py", line 98, in launch
+    main_func(*args)
+    │          └ (╒══════════════════╤════════════════════════════════════════════════════════════════════════════════════════════════════════...
+    └ <function main at 0x7fde158d08c0>
+
+  File "code/tools/train.py", line 124, in main
+    trainer.train()
+    │       └ <function Trainer.train at 0x7fdd692f1ef0>
+    └ <yolox.core.trainer.Trainer object at 0x7fdd544f0210>
+
+  File "/workspace/code/yolox/core/trainer.py", line 85, in train
+    self.before_train()
+    │    └ <function Trainer.before_train at 0x7fdd68d32950>
+    └ <yolox.core.trainer.Trainer object at 0x7fdd544f0210>
+
+  File "/workspace/code/yolox/core/trainer.py", line 164, in before_train
+    cache_img=self.args.cache,
+              │    │    └ False
+              │    └ Namespace(batch_size=64, cache=False, ckpt=None, devices=None, dist_backend='nccl', dist_url=None, exp_file='code/exps/defaul...
+              └ <yolox.core.trainer.Trainer object at 0x7fdd544f0210>
+
+  File "/workspace/code/yolox/exp/yolox_base_deploy.py", line 138, in get_data_loader
+    cache=cache_img,
+          └ False
+
+  File "/workspace/code/yolox/data/datasets/coco.py", line 45, in __init__
+    self.coco = COCO(os.path.join(self.data_dir, "annotations", self.json_file))
+    │           │    │  │    │    │    │                        │    └ 'instances_train2017.json'
+    │           │    │  │    │    │    │                        └ <yolox.data.datasets.coco.COCODataset object at 0x7fdd8eab7ed0>
+    │           │    │  │    │    │    └ '/workspace/code/datasets/COCO'
+    │           │    │  │    │    └ <yolox.data.datasets.coco.COCODataset object at 0x7fdd8eab7ed0>
+    │           │    │  │    └ <function join at 0x7fde16cd4dd0>
+    │           │    │  └ <module 'posixpath' from '/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/posixpath.py'>
+    │           │    └ <module 'os' from '/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/os.py'>
+    │           └ <class 'pycocotools.coco.COCO'>
+    └ <yolox.data.datasets.coco.COCODataset object at 0x7fdd8eab7ed0>
+
+  File "/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/pycocotools/coco.py", line 81, in __init__
+    with open(annotation_file, 'r') as f:
+              └ '/workspace/code/datasets/COCO/annotations/instances_train2017.json'
+
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/code/datasets/COCO/annotations/instances_train2017.json'
+2023-06-05 11:40:50.555 | INFO     | yolox.core.trainer:before_train:141 - args: Namespace(batch_size=64, cache=False, ckpt=None, devices=None, dist_backend='nccl', dist_url=None, exp_file='code/exps/default/yolox_s_deploy.py', experiment_name='yolox_s_deploy', fp16=False, machine_rank=0, name=None, num_machines=1, occupy=True, opts=[], resume=False, start_epoch=None)
+2023-06-05 11:40:50.561 | INFO     | yolox.core.trainer:before_train:142 - exp value:
+╒══════════════════╤════════════════════════════╕
+│ keys             │ values                     │
+╞══════════════════╪════════════════════════════╡
+│ seed             │ None                       │
+├──────────────────┼────────────────────────────┤
+│ output_dir       │ './YOLOX_outputs'          │
+├──────────────────┼────────────────────────────┤
+│ print_interval   │ 10                         │
+├──────────────────┼────────────────────────────┤
+│ eval_interval    │ 10                         │
+├──────────────────┼────────────────────────────┤
+│ num_classes      │ 7                          │
+├──────────────────┼────────────────────────────┤
+│ depth            │ 0.33                       │
+├──────────────────┼────────────────────────────┤
+│ width            │ 0.5                        │
+├──────────────────┼────────────────────────────┤
+│ act              │ 'lrelu'                    │
+├──────────────────┼────────────────────────────┤
+│ data_num_workers │ 4                          │
+├──────────────────┼────────────────────────────┤
+│ input_size       │ (384, 1248)                │
+├──────────────────┼────────────────────────────┤
+│ multiscale_range │ 5                          │
+├──────────────────┼────────────────────────────┤
+│ data_dir         │ None                       │
+├──────────────────┼────────────────────────────┤
+│ train_ann        │ 'instances_train2017.json' │
+├──────────────────┼────────────────────────────┤
+│ val_ann          │ 'instances_val2017.json'   │
+├──────────────────┼────────────────────────────┤
+│ test_ann         │ 'instances_test2017.json'  │
+├──────────────────┼────────────────────────────┤
+│ mosaic_prob      │ 1.0                        │
+├──────────────────┼────────────────────────────┤
+│ mixup_prob       │ 1.0                        │
+├──────────────────┼────────────────────────────┤
+│ hsv_prob         │ 1.0                        │
+├──────────────────┼────────────────────────────┤
+│ flip_prob        │ 0.5                        │
+├──────────────────┼────────────────────────────┤
+│ degrees          │ 10.0                       │
+├──────────────────┼────────────────────────────┤
+│ translate        │ 0.1                        │
+├──────────────────┼────────────────────────────┤
+│ mosaic_scale     │ (0.1, 2)                   │
+├──────────────────┼────────────────────────────┤
+│ mixup_scale      │ (0.5, 1.5)                 │
+├──────────────────┼────────────────────────────┤
+│ shear            │ 2.0                        │
+├──────────────────┼────────────────────────────┤
+│ enable_mixup     │ True                       │
+├──────────────────┼────────────────────────────┤
+│ warmup_epochs    │ 5                          │
+├──────────────────┼────────────────────────────┤
+│ max_epoch        │ 300                        │
+├──────────────────┼────────────────────────────┤
+│ warmup_lr        │ 0                          │
+├──────────────────┼────────────────────────────┤
+│ basic_lr_per_img │ 0.00015625                 │
+├──────────────────┼────────────────────────────┤
+│ scheduler        │ 'yoloxwarmcos'             │
+├──────────────────┼────────────────────────────┤
+│ no_aug_epochs    │ 15                         │
+├──────────────────┼────────────────────────────┤
+│ min_lr_ratio     │ 0.05                       │
+├──────────────────┼────────────────────────────┤
+│ ema              │ True                       │
+├──────────────────┼────────────────────────────┤
+│ weight_decay     │ 0.0005                     │
+├──────────────────┼────────────────────────────┤
+│ momentum         │ 0.9                        │
+├──────────────────┼────────────────────────────┤
+│ exp_name         │ 'yolox_s_deploy'           │
+├──────────────────┼────────────────────────────┤
+│ test_size        │ (384, 1248)                │
+├──────────────────┼────────────────────────────┤
+│ test_conf        │ 0.01                       │
+├──────────────────┼────────────────────────────┤
+│ nmsthre          │ 0.65                       │
+╘══════════════════╧════════════════════════════╛
+2023-06-05 11:40:50.785 | INFO     | yolox.core.trainer:before_train:148 - Model Summary: Params: 8.94M, Gflops: 30.70
+2023-06-05 11:40:51.905 | INFO     | yolox.data.datasets.coco:__init__:45 - loading annotations into memory...
+2023-06-05 11:40:51.905 | ERROR    | yolox.core.launch:launch:98 - An error has been caught in function 'launch', process 'MainProcess' (262), thread 'MainThread' (140501541848896):
+Traceback (most recent call last):
+
+  File "code/tools/train.py", line 147, in <module>
+    args=(exp, args),
+          │    └ Namespace(batch_size=64, cache=False, ckpt=None, devices=None, dist_backend='nccl', dist_url=None, exp_file='code/exps/defaul...
+          └ ╒══════════════════╤═════════════════════════════════════════════════════════════════════════════════════════════════════════...
+
+> File "/workspace/code/yolox/core/launch.py", line 98, in launch
+    main_func(*args)
+    │          └ (╒══════════════════╤════════════════════════════════════════════════════════════════════════════════════════════════════════...
+    └ <function main at 0x7fc90ef748c0>
+
+  File "code/tools/train.py", line 124, in main
+    trainer.train()
+    │       └ <function Trainer.train at 0x7fc862994ef0>
+    └ <yolox.core.trainer.Trainer object at 0x7fc84db91150>
+
+  File "/workspace/code/yolox/core/trainer.py", line 85, in train
+    self.before_train()
+    │    └ <function Trainer.before_train at 0x7fc8623d5950>
+    └ <yolox.core.trainer.Trainer object at 0x7fc84db91150>
+
+  File "/workspace/code/yolox/core/trainer.py", line 164, in before_train
+    cache_img=self.args.cache,
+              │    │    └ False
+              │    └ Namespace(batch_size=64, cache=False, ckpt=None, devices=None, dist_backend='nccl', dist_url=None, exp_file='code/exps/defaul...
+              └ <yolox.core.trainer.Trainer object at 0x7fc84db91150>
+
+  File "/workspace/code/yolox/exp/yolox_base_deploy.py", line 138, in get_data_loader
+    cache=cache_img,
+          └ False
+
+  File "/workspace/code/yolox/data/datasets/coco.py", line 45, in __init__
+    self.coco = COCO(os.path.join(self.data_dir, "annotations", self.json_file))
+    │           │    │  │    │    │    │                        │    └ 'instances_train2017.json'
+    │           │    │  │    │    │    │                        └ <yolox.data.datasets.coco.COCODataset object at 0x7fc84db82490>
+    │           │    │  │    │    │    └ '/workspace/code/datasets/COCO'
+    │           │    │  │    │    └ <yolox.data.datasets.coco.COCODataset object at 0x7fc84db82490>
+    │           │    │  │    └ <function join at 0x7fc910378dd0>
+    │           │    │  └ <module 'posixpath' from '/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/posixpath.py'>
+    │           │    └ <module 'os' from '/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/os.py'>
+    │           └ <class 'pycocotools.coco.COCO'>
+    └ <yolox.data.datasets.coco.COCODataset object at 0x7fc84db82490>
+
+  File "/opt/vitis_ai/conda/envs/vitis-ai-pytorch/lib/python3.7/site-packages/pycocotools/coco.py", line 81, in __init__
+    with open(annotation_file, 'r') as f:
+              └ '/workspace/code/datasets/COCO/annotations/instances_train2017.json'
+
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/code/datasets/COCO/annotations/instances_train2017.json'
+2023-06-05 11:45:34.045 | INFO     | yolox.core.trainer:before_train:141 - args: Namespace(batch_size=64, cache=False, ckpt=None, devices=None, dist_backend='nccl', dist_url=None, exp_file='code/exps/default/yolox_s_deploy.py', experiment_name='yolox_s_deploy', fp16=False, machine_rank=0, name=None, num_machines=1, occupy=True, opts=[], resume=False, start_epoch=None)
+2023-06-05 11:45:34.052 | INFO     | yolox.core.trainer:before_train:142 - exp value:
+╒══════════════════╤════════════════════════════╕
+│ keys             │ values                     │
+╞══════════════════╪════════════════════════════╡
+│ seed             │ None                       │
+├──────────────────┼────────────────────────────┤
+│ output_dir       │ './YOLOX_outputs'          │
+├──────────────────┼────────────────────────────┤
+│ print_interval   │ 10                         │
+├──────────────────┼────────────────────────────┤
+│ eval_interval    │ 10                         │
+├──────────────────┼────────────────────────────┤
+│ num_classes      │ 7                          │
+├──────────────────┼────────────────────────────┤
+│ depth            │ 0.33                       │
+├──────────────────┼────────────────────────────┤
+│ width            │ 0.5                        │
+├──────────────────┼────────────────────────────┤
+│ act              │ 'lrelu'                    │
+├──────────────────┼────────────────────────────┤
+│ data_num_workers │ 4                          │
+├──────────────────┼────────────────────────────┤
+│ input_size       │ (384, 1248)                │
+├──────────────────┼────────────────────────────┤
+│ multiscale_range │ 5                          │
+├──────────────────┼────────────────────────────┤
+│ data_dir         │ None                       │
+├──────────────────┼────────────────────────────┤
+│ train_ann        │ 'instances_train2017.json' │
+├──────────────────┼────────────────────────────┤
+│ val_ann          │ 'instances_val2017.json'   │
+├──────────────────┼────────────────────────────┤
+│ test_ann         │ 'instances_test2017.json'  │
+├──────────────────┼────────────────────────────┤
+│ mosaic_prob      │ 1.0                        │
+├──────────────────┼────────────────────────────┤
+│ mixup_prob       │ 1.0                        │
+├──────────────────┼────────────────────────────┤
+│ hsv_prob         │ 1.0                        │
+├──────────────────┼────────────────────────────┤
+│ flip_prob        │ 0.5                        │
+├──────────────────┼────────────────────────────┤
+│ degrees          │ 10.0                       │
+├──────────────────┼────────────────────────────┤
+│ translate        │ 0.1                        │
+├──────────────────┼────────────────────────────┤
+│ mosaic_scale     │ (0.1, 2)                   │
+├──────────────────┼────────────────────────────┤
+│ mixup_scale      │ (0.5, 1.5)                 │
+├──────────────────┼────────────────────────────┤
+│ shear            │ 2.0                        │
+├──────────────────┼────────────────────────────┤
+│ enable_mixup     │ True                       │
+├──────────────────┼────────────────────────────┤
+│ warmup_epochs    │ 5                          │
+├──────────────────┼────────────────────────────┤
+│ max_epoch        │ 300                        │
+├──────────────────┼────────────────────────────┤
+│ warmup_lr        │ 0                          │
+├──────────────────┼────────────────────────────┤
+│ basic_lr_per_img │ 0.00015625                 │
+├──────────────────┼────────────────────────────┤
+│ scheduler        │ 'yoloxwarmcos'             │
+├──────────────────┼────────────────────────────┤
+│ no_aug_epochs    │ 15                         │
+├──────────────────┼────────────────────────────┤
+│ min_lr_ratio     │ 0.05                       │
+├──────────────────┼────────────────────────────┤
+│ ema              │ True                       │
+├──────────────────┼────────────────────────────┤
+│ weight_decay     │ 0.0005                     │
+├──────────────────┼────────────────────────────┤
+│ momentum         │ 0.9                        │
+├──────────────────┼────────────────────────────┤
+│ exp_name         │ 'yolox_s_deploy'           │
+├──────────────────┼────────────────────────────┤
+│ test_size        │ (384, 1248)                │
+├──────────────────┼────────────────────────────┤
+│ test_conf        │ 0.01                       │
+├──────────────────┼────────────────────────────┤
+│ nmsthre          │ 0.65                       │
+╘══════════════════╧════════════════════════════╛
+2023-06-05 11:45:34.669 | INFO     | yolox.core.trainer:before_train:148 - Model Summary: Params: 8.94M, Gflops: 30.70
+2023-06-05 11:45:36.284 | INFO     | yolox.data.datasets.coco:__init__:45 - loading annotations into memory...
+2023-06-05 11:45:36.875 | INFO     | yolox.data.datasets.coco:__init__:45 - Done (t=0.59s)
+2023-06-05 11:45:36.875 | INFO     | pycocotools.coco:__init__:86 - creating index...
+2023-06-05 11:45:36.945 | INFO     | pycocotools.coco:__init__:86 - index created!
+2023-06-05 11:45:40.898 | INFO     | yolox.core.trainer:before_train:166 - init prefetcher, this might take one minute or less...
+2023-06-05 11:53:21.000 | INFO     | yolox.core.trainer:before_train:141 - args: Namespace(batch_size=64, cache=False, ckpt=None, devices=None, dist_backend='nccl', dist_url=None, exp_file='code/exps/default/yolox_s_deploy.py', experiment_name='yolox_s_deploy', fp16=False, machine_rank=0, name=None, num_machines=1, occupy=True, opts=[], resume=False, start_epoch=None)
+2023-06-05 11:53:21.007 | INFO     | yolox.core.trainer:before_train:142 - exp value:
+╒══════════════════╤════════════════════════════╕
+│ keys             │ values                     │
+╞══════════════════╪════════════════════════════╡
+│ seed             │ None                       │
+├──────────────────┼────────────────────────────┤
+│ output_dir       │ './YOLOX_outputs'          │
+├──────────────────┼────────────────────────────┤
+│ print_interval   │ 10                         │
+├──────────────────┼────────────────────────────┤
+│ eval_interval    │ 10                         │
+├──────────────────┼────────────────────────────┤
+│ num_classes      │ 7                          │
+├──────────────────┼────────────────────────────┤
+│ depth            │ 0.33                       │
+├──────────────────┼────────────────────────────┤
+│ width            │ 0.5                        │
+├──────────────────┼────────────────────────────┤
+│ act              │ 'lrelu'                    │
+├──────────────────┼────────────────────────────┤
+│ data_num_workers │ 4                          │
+├──────────────────┼────────────────────────────┤
+│ input_size       │ (384, 1248)                │
+├──────────────────┼────────────────────────────┤
+│ multiscale_range │ 5                          │
+├──────────────────┼────────────────────────────┤
+│ data_dir         │ None                       │
+├──────────────────┼────────────────────────────┤
+│ train_ann        │ 'instances_train2017.json' │
+├──────────────────┼────────────────────────────┤
+│ val_ann          │ 'instances_val2017.json'   │
+├──────────────────┼────────────────────────────┤
+│ test_ann         │ 'instances_test2017.json'  │
+├──────────────────┼────────────────────────────┤
+│ mosaic_prob      │ 1.0                        │
+├──────────────────┼────────────────────────────┤
+│ mixup_prob       │ 1.0                        │
+├──────────────────┼────────────────────────────┤
+│ hsv_prob         │ 1.0                        │
+├──────────────────┼────────────────────────────┤
+│ flip_prob        │ 0.5                        │
+├──────────────────┼────────────────────────────┤
+│ degrees          │ 10.0                       │
+├──────────────────┼────────────────────────────┤
+│ translate        │ 0.1                        │
+├──────────────────┼────────────────────────────┤
+│ mosaic_scale     │ (0.1, 2)                   │
+├──────────────────┼────────────────────────────┤
+│ mixup_scale      │ (0.5, 1.5)                 │
+├──────────────────┼────────────────────────────┤
+│ shear            │ 2.0                        │
+├──────────────────┼────────────────────────────┤
+│ enable_mixup     │ True                       │
+├──────────────────┼────────────────────────────┤
+│ warmup_epochs    │ 5                          │
+├──────────────────┼────────────────────────────┤
+│ max_epoch        │ 300                        │
+├──────────────────┼────────────────────────────┤
+│ warmup_lr        │ 0                          │
+├──────────────────┼────────────────────────────┤
+│ basic_lr_per_img │ 0.00015625                 │
+├──────────────────┼────────────────────────────┤
+│ scheduler        │ 'yoloxwarmcos'             │
+├──────────────────┼────────────────────────────┤
+│ no_aug_epochs    │ 15                         │
+├──────────────────┼────────────────────────────┤
+│ min_lr_ratio     │ 0.05                       │
+├──────────────────┼────────────────────────────┤
+│ ema              │ True                       │
+├──────────────────┼────────────────────────────┤
+│ weight_decay     │ 0.0005                     │
+├──────────────────┼────────────────────────────┤
+│ momentum         │ 0.9                        │
+├──────────────────┼────────────────────────────┤
+│ exp_name         │ 'yolox_s_deploy'           │
+├──────────────────┼────────────────────────────┤
+│ test_size        │ (384, 1248)                │
+├──────────────────┼────────────────────────────┤
+│ test_conf        │ 0.01                       │
+├──────────────────┼────────────────────────────┤
+│ nmsthre          │ 0.65                       │
+╘══════════════════╧════════════════════════════╛
+2023-06-05 11:53:23.790 | INFO     | yolox.core.trainer:before_train:148 - Model Summary: Params: 8.94M, Gflops: 30.70
+2023-06-05 11:54:02.340 | INFO     | yolox.data.datasets.coco:__init__:45 - loading annotations into memory...
+2023-06-05 11:54:02.863 | INFO     | yolox.data.datasets.coco:__init__:45 - Done (t=0.52s)
+2023-06-05 11:54:02.863 | INFO     | pycocotools.coco:__init__:86 - creating index...
+2023-06-05 11:54:02.924 | INFO     | pycocotools.coco:__init__:86 - index created!
+2023-06-05 11:54:05.878 | INFO     | yolox.core.trainer:before_train:166 - init prefetcher, this might take one minute or less...
