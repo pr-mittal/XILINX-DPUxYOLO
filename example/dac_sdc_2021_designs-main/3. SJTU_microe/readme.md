@@ -1,1 +1,0 @@
-You can refer to https://github.com/heymesut/SJTU_microe for more details.
