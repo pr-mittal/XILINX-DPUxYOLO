@@ -251,7 +251,7 @@ class Yolo_dataset(Dataset):
         self.albumentations = Albumentations() if augment else None
         self.label_files = [x.replace('images', 'labels').replace(os.path.splitext(x)[-1], '.txt')
                             for x in self.img_files]
-
+        # print(self.label_files)
         # Check cache
         cache_path = (Path(path) if Path(path).is_file() else Path(self.label_files[0]).parent).with_suffix('.cache')
         # cache, exists = np.load(cache_path, allow_pickle=True).item(), True  # load dict
@@ -277,6 +277,7 @@ class Yolo_dataset(Dataset):
                 shapes.append(x[1])
                 self.segments.append(x[2])
                 self.img_files.append(y)
+        # print(self.img_files)
         # zip(*cache.values())
         # print(cache.keys())
         self.labels = list(labels)
