@@ -54,3 +54,5 @@ git clone https://github.com/Xilinx/Vitis-AI
 cd Vitis-AI/docker
 ./docker_build.sh -t gpu -f pytorch
 docker run --gpus all nvidia/cuda:11.3.1-cudnn8-runtime-ubuntu20.04 nvidia-smi
+
+#compile the dataset 

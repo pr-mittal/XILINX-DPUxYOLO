@@ -1,0 +1,6 @@
+classes= 7
+train=dataset/train
+valid=dataset/val
+names=dataset/dacsdc.names
+backup=backup/
+eval=dacsdc

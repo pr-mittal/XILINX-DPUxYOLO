@@ -6,7 +6,7 @@ from math import floor
 import numpy as np
 import json
 
-model="yolo3"
+model="yolov3"
 
 
 if(model=="yolox"):
