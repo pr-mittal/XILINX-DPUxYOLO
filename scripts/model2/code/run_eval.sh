@@ -17,7 +17,7 @@ echo "Conducting test..."
 export CUDA_VISIBLE_DEVICES=0
 GPU_NUM=1
 
-DATASET=${PWD}/data/KITTI/training
+DATASET=${PWD}/code/datasets/COCO
 WEIGHTS=${PWD}/float/yolox.pth
 CFG=code/exps/default/yolox_s_deploy.py
 python code/tools/eval.py -f ${CFG} -c ${WEIGHTS} -b 32 -d ${GPU_NUM} --conf 0.001

@@ -80,6 +80,14 @@ class ofa_yolo_30(nn.Module):
             x = self.m.method(x)
         x = self.dequant(x)
         return x
+    def freeze(self):
+        for name,param in self.model.named_parameters():
+            if name not in ['module_240.weight', 'module_240.bias', 'module_241.weight', 'module_241.bias', 'module_242.weight', 'module_242.bias']:
+                # print(name)
+                param.requires_grad=False
+    def unfreeze(self):
+        for param in self.model.parameters():
+            param.requires_grad_()
 
 class ofa_yolo_0(nn.Module):
     def __init__(self,anchors=(),anchors_weight=None):
@@ -102,7 +110,14 @@ class ofa_yolo_0(nn.Module):
             x = self.m.method(x)
         x = self.dequant(x)
         return x
-
+    def freeze(self):
+        for name,param in self.model.named_parameters():
+            if name not in ['module_240.weight', 'module_240.bias', 'module_241.weight', 'module_241.bias', 'module_242.weight', 'module_242.bias']:
+                # print(name)
+                param.requires_grad=False
+    def unfreeze(self):
+        for param in self.model.parameters():
+            param.requires_grad_()
 class ofa_yolo_50(nn.Module):
     def __init__(self,anchors=(),anchors_weight=None):
         super().__init__()
@@ -124,5 +139,13 @@ class ofa_yolo_50(nn.Module):
             x = self.m.method(x)
         x = self.dequant(x)
         return x
+    def freeze(self):
+        for name,param in self.model.named_parameters():
+            if name not in ['module_240.weight', 'module_240.bias', 'module_241.weight', 'module_241.bias', 'module_242.weight', 'module_242.bias']:
+                # print(name)
+                param.requires_grad=False
+    def unfreeze(self):
+        for param in self.model.parameters():
+            param.requires_grad_()
 
 

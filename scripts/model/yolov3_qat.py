@@ -213,8 +213,13 @@ def train(model, device, cfg,nndct_quant=False):
     print('Using %g dataloader workers' % nw)
     print('Starting training for %g epochs...' % epochs)
 
-    for epoch in range(start_epoch, 2):#epochs):  # epoch ------------------------------------------------------------------
+    for epoch in range(start_epoch,epochs): #2): # epoch ------------------------------------------------------------------
         model.train()
+        #freeze model if epochs>200
+        if(epochs>=60 and epoch==start_epoch):
+            model.freeze()
+        elif(epoch==30):
+            model.unfreeze()
         mloss = torch.zeros(3, device=device)  # mean losses
         pbar = tqdm(enumerate(dataloader), total=nb)
         logging.info(('\n' + '%10s' * 7) % ('Epoch', 'gpu_mem', 'box', 'obj', 'cls', 'labels', 'img_size'))
@@ -436,7 +441,8 @@ if __name__ == "__main__":
         if cfg.ratio == 0:
             model = ofa_yolo_0(anchors)
         model = model.to(device)
-
+    # model.freeze()
+    # exit(0)
     try:
         if cfg.nndct_quant:
             train(model=model,
@@ -457,3 +463,4 @@ if __name__ == "__main__":
             sys.exit(0)
         except SystemExit:
             os._exit(0)
+    

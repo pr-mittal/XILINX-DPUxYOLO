@@ -18,10 +18,10 @@ export BUILD=./build
 export LOG=${BUILD}/logs
 mkdir -p ${LOG}
 
-./run_qat.sh
-./run_quant.sh
-./run_qat_test.sh
-./run_test.sh
+bash ./run_qat.sh
+bash ./run_quant.sh
+bash ./run_qat_test.sh
+bash ./run_test.sh
 # # compile for target boards
 # source compile.sh zcu102 ${BUILD} ${LOG}
 # source compile.sh zcu104 ${BUILD} ${LOG}

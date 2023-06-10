@@ -107,4 +107,4 @@ def compile_model(model="yolov3"):
         model.load_state_dict(checkpoint["model"])
 
 if __name__=="__main__":
-    compile_model("yolov3")
+    compile_model("yolox")

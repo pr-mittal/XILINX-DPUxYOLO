@@ -119,7 +119,8 @@ def main(exp, args):
     configure_nccl()
     configure_omp()
     cudnn.benchmark = True
-
+    # print(exp.output_dir, args.experiment_name)
+    # return
     trainer = Trainer(exp, args)
     trainer.train()
 

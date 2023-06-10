@@ -89,9 +89,21 @@ class Trainer:
             raise
         finally:
             self.after_train()
-
+    def freeze_model(self):
+        for name,param in self.model.named_parameters():
+            if name.split(".")[0]!="head":
+                # print(name)
+                param.requires_grad=False
+    def unfreeze_model(self):
+        for param in self.model.parameters():
+            param.requires_grad_()
     def train_in_epoch(self):
         for self.epoch in range(self.start_epoch, self.max_epoch):
+            if(self.max_epoch>=200 and self.epoch==0):
+                self.freeze_model()
+            elif(self.max_epoch>=200 and self.epoch==100):
+                self.unfreeze_model()
+
             self.before_epoch()
             self.train_in_iter()
             self.after_epoch()
