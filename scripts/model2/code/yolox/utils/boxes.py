@@ -30,15 +30,23 @@ def filter_box(output, scale_range):
 
 
 def postprocess(prediction, num_classes, conf_thre=0.7, nms_thre=0.45, class_agnostic=False):
-    box_corner = prediction.new(prediction.shape)
-    box_corner[:, :, 0] = prediction[:, :, 0] - prediction[:, :, 2] / 2
-    box_corner[:, :, 1] = prediction[:, :, 1] - prediction[:, :, 3] / 2
-    box_corner[:, :, 2] = prediction[:, :, 0] + prediction[:, :, 2] / 2
-    box_corner[:, :, 3] = prediction[:, :, 1] + prediction[:, :, 3] / 2
-    prediction[:, :, :4] = box_corner[:, :, :4]
-
+    #prediction=torch.FloatTensor(prediction)
+    #print(prediction)
+    #print(len(prediction))
+    #print(prediction[0].shape)
+    #box_corner=[]
+    #for i in prediction:
+    #	box_corner.append(prediction[0].new(prediction[0].shape))
+    #box_corner = prediction.new(prediction[0].shape)
+    #prediction=torch.stack(prediction)
     output = [None for _ in range(len(prediction))]
     for i, image_pred in enumerate(prediction):
+        box_corner = image_pred.new(image_pred.shape)
+        box_corner[:, 0] = image_pred[:, 0] - image_pred[:, 2] / 2
+        box_corner[:, 1] = image_pred[:, 1] - image_pred[:, 3] / 2
+        box_corner[:, 2] = image_pred[:, 0] + image_pred[:, 2] / 2
+        box_corner[:, 3] = image_pred[:, 1] + image_pred[:, 3] / 2
+        image_pred[:, :4] = box_corner[:, :4]
 
         # If none are remaining => process next image
         if not image_pred.size(0):
@@ -46,9 +54,10 @@ def postprocess(prediction, num_classes, conf_thre=0.7, nms_thre=0.45, class_agn
         # Get score and class with highest confidence
         class_conf, class_pred = torch.max(image_pred[:, 5: 5 + num_classes], 1, keepdim=True)
 
-        conf_mask = (image_pred[:, 4] * class_conf.squeeze() >= conf_thre).squeeze()
+        conf_mask = (image_pred[:, 4] * class_conf.squeeze() >= conf_thre).squeeze(1)
         # Detections ordered as (x1, y1, x2, y2, obj_conf, class_conf, class_pred)
         detections = torch.cat((image_pred[:, :5], class_conf, class_pred.float()), 1)
+        detections=detections.permute(0,2,3,1)
         detections = detections[conf_mask]
         if not detections.size(0):
             continue

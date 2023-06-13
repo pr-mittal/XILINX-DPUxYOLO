@@ -17,10 +17,10 @@ echo "Conducting test..."
 
 export CUDA_VISIBLE_DEVICES=0
 GPU_NUM=1
-BATCH=64
+BATCH=4
 WEIGHTS=${PWD}/float/yolox.pth
 CFG=code/exps/default/yolox_s_deploy.py
 # python code/tools/train.py -f ${CFG} -d ${GPU_NUM} -b 64 -o # --fp16
-python code/tools/train.py -f ${CFG} -b ${BATCH} -o --resume --ckpt ${WEIGHTS} # --fp16
+python code/tools/train.py -f ${CFG} -b ${BATCH} -o --resume --ckpt ${WEIGHTS} --fp16
 # python -m yolox.tools.train -f ${CFG} -d ${GPU_NUM} -b ${BATCH} -o
 # python -m yolox.tools.train -f ${CFG} -b ${BATCH} -o

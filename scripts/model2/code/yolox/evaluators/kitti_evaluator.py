@@ -111,6 +111,8 @@ class KITTIEvaluator:
                     start = time.time()
 
                 outputs = model(imgs)
+                #print(len(outputs))
+                #print(outputs[0].shape)
                 if decoder is not None:
                     outputs = decoder(outputs, dtype=outputs.type())
 

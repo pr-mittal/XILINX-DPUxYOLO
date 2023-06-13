@@ -57,7 +57,10 @@ def train(model, device, cfg,nndct_quant=False):
     if not os.path.exists(weight_dir):
         os.mkdir(weight_dir)
     last_model = weight_dir+'/last_model.pt'
+    last_model_ema = weight_dir+'/last_model_ema.pt'
     best_model = weight_dir+'/best_model.pt'
+    best_model_ema = weight_dir+'/best_model_ema.pt'
+
     # Save run settings
     import json
     with open(cfg.save_dir + '/cfg.json', 'w') as f:
@@ -96,89 +99,44 @@ def train(model, device, cfg,nndct_quant=False):
     #          half=not nndct_quant,
     #          nndct_quant=False,
     #          all_result=True)
-    #quant_model
-    if nndct_quant:
-        from pytorch_nndct import QatProcessor
-        # Image sizes
-        model.train()
-        im = torch.zeros(batch_size, 3, 640, 640).to(device)  # image size(1,3,320,192) BCHW iDetection
-        # dry run
-        for _ in range(2):
-            y = model(im)  # dry runs
-        ori_model = deepcopy(model)
-        ori_model_ema = deepcopy(model)
-        model.forward = partial(model.forward, quant=True)
-        qat_processor = QatProcessor(model, (im,), bitwidth=8, mix_bit=False)
-        calib_dir = cfg.qt_dir
-        post_method = model.m.method
-        # model = qat_processor.trainable_model(calib_dir=calib_dir)
-        model = qat_processor.trainable_model()
-        ori_forward = model.forward
-        def forward(x):
-            out = ori_forward(x)
-            return post_method(out)
-        model.forward = forward
     # Optimizer
     nbs = 64  # nominal batch size
     accumulate = max(round(nbs / batch_size), 1)  # accumulate loss before optimizing
     cfg.weight_decay *= batch_size * accumulate / nbs  # scale weight_decay
     logging.info(f"Scaled weight_decay = {cfg.weight_decay}")
-    if not qat_group:
-        g0, g1, g2 = [], [], []  # optimizer parameter groups
-        for v in model.modules():
-            if hasattr(v, 'bias') and isinstance(v.bias, nn.Parameter):  # bias
-                g2.append(v.bias)
-            if isinstance(v, nn.BatchNorm2d):  # weight (no decay)
-                g0.append(v.weight)
-            elif hasattr(v, 'weight') and isinstance(v.weight, nn.Parameter):  # weight (with decay)
-                g1.append(v.weight)
+    g0, g1, g2 = [], [], []  # optimizer parameter groups
+    for v in model.modules():
+        if hasattr(v, 'bias') and isinstance(v.bias, nn.Parameter):  # bias
+            g2.append(v.bias)
+        if isinstance(v, nn.BatchNorm2d):  # weight (no decay)
+            g0.append(v.weight)
+        elif hasattr(v, 'weight') and isinstance(v.weight, nn.Parameter):  # weight (with decay)
+            g1.append(v.weight)
 
-        if cfg.TRAIN_OPTIMIZER == 'adam':
-            optimizer = Adam(g0, lr=lr0, betas=(cfg.momentum, 0.999))  # adjust beta1 to momentum
-        elif cfg.TRAIN_OPTIMIZER == 'adamw':
-            optimizer = AdamW(g0, lr=lr0, betas=(cfg.momentum, 0.999))  # adjust beta1 to momentum
-        else:
-            optimizer = SGD(g0, lr=lr0, momentum=cfg.momentum, nesterov=True)
-
-        optimizer.add_param_group({'params': g1, 'weight_decay': cfg.weight_decay})  # add g1 with weight_decay
-        optimizer.add_param_group({'params': g2})  # add g2 (biases)
-        if not nndct_quant:
-            threshold = [
-                param for name, param in model.named_parameters()
-                if 'threshold' in name
-            ]
-            g_qat = {
-                'params': threshold,
-                'lr': lr0 * 100,
-                'name': 'threshold'
-            }
-            optimizer.add_param_group(g_qat)
-            logging.info(f"optimizer: {type(optimizer).__name__} with parameter groups "
-                        f"{len(g0)} weight, {len(g1)} weight (no decay), {len(g2)} bias, {len(g_qat)} log_threshold")
-            del g0, g1, g2, g_qat
-        else:
-            logging.info(f"optimizer: {type(optimizer).__name__} with parameter groups "
-                        f"{len(g0)} weight, {len(g1)} weight (no decay), {len(g2)} bias")
-            del g0, g1, g2
+    if cfg.TRAIN_OPTIMIZER == 'adam':
+        optimizer = Adam(g0, lr=lr0, betas=(cfg.momentum, 0.999))  # adjust beta1 to momentum
+    elif cfg.TRAIN_OPTIMIZER == 'adamw':
+        optimizer = AdamW(g0, lr=lr0, betas=(cfg.momentum, 0.999))  # adjust beta1 to momentum
     else:
-        param_groups = [{
-            'params': model.quantizer_parameters(),
-            'lr': lr0*100,
-            'name': 'quantizer'
-        }, {
-            'params': model.non_quantizer_parameters(),
-            'lr': lr0,
-            'name': 'weight'
-        }]
-        if cfg.TRAIN_OPTIMIZER == 'adam':
-            optimizer = Adam(param_groups, lr=lr0, betas=(cfg.momentum, 0.999))  # adjust beta1 to momentum
-        elif cfg.TRAIN_OPTIMIZER == 'adamw':
-            optimizer = AdamW(param_groups, lr=lr0, betas=(cfg.momentum, 0.999))  # adjust beta1 to momentum
-        else:
-            optimizer = SGD(param_groups, lr=lr0, momentum=cfg.momentum, nesterov=True)
-        logging.info(f"optimizer: {type(optimizer).__name__} with parameter groups "
-                    f"{len(param_groups[0]['params'])} quantizer, {len(param_groups[1]['params'])} weight")
-        del param_groups
+        optimizer = SGD(g0, lr=lr0, momentum=cfg.momentum, nesterov=True)
+
+    optimizer.add_param_group({'params': g1, 'weight_decay': cfg.weight_decay})  # add g1 with weight_decay
+    optimizer.add_param_group({'params': g2})  # add g2 (biases)
+    
+    threshold = [
+        param for name, param in model.named_parameters()
+        if 'threshold' in name
+    ]
+    g_qat = {
+        'params': threshold,
+        'lr': lr0 * 100,
+        'name': 'threshold'
+    }
+    optimizer.add_param_group(g_qat)
+    logging.info(f"optimizer: {type(optimizer).__name__} with parameter groups "
+                f"{len(g0)} weight, {len(g1)} weight (no decay), {len(g2)} bias, {len(g_qat)} log_threshold")
+    del g0, g1, g2, g_qat
+   
     # Scheduler https://arxiv.org/pdf/1812.01187.pdf
     start_epoch, best_fitness = 0, 0.0
     best_epoch = 0
@@ -187,7 +145,7 @@ def train(model, device, cfg,nndct_quant=False):
     scheduler.last_epoch = start_epoch - 1  # do not move
 
     # Model parameters
-    cfg.cls *= class_num / 80.   # scale to classes and layers
+    cfg.cls *= class_num / 7.   # scale to classes and layers
     cfg.obj *= (imgsz / 640) ** 2  # scale to image size and layers
     model.nc = class_num  # attach number of classes to model
     model.hyp = cfg  # attach hyperparameters to model
@@ -240,6 +198,7 @@ def train(model, device, cfg,nndct_quant=False):
                         x['momentum'] = np.interp(ni, xi, [cfg.warmup_momentum, cfg.momentum])
             with amp.autocast(enabled=cuda and not nndct_quant):
                 pred = model(imgs)  # forward
+                # print("PRED",pred,"TARGET",targets)
                 loss, loss_items = compute_loss(pred, targets.to(device).float(), model, None)
             # Backward
             scaler.scale(loss).backward()
@@ -253,13 +212,17 @@ def train(model, device, cfg,nndct_quant=False):
                 last_opt_step = ni
 
             # Print
+            # print("PRINT",mloss,i,loss_items)
             mloss = (mloss * i + loss_items) / (i + 1)  # update mean losses
             mem = '%.3gG' % (torch.cuda.memory_cached() / 1E9 if torch.cuda.is_available() else 0)  # (GB)
-
+            # mloss_list=[]
+            # for x in mloss:
+            #     mloss_list.append(x.item())
+            # print(mloss_list)
             s = ('%10s' * 2 + '%10.4g' * 5) % (
                 '%g/%g' % (epoch, epochs - 1), mem, *mloss, targets.shape[0], imgs.shape[-1])
             pbar.set_description(s)
-            break
+            exit
             # end batch ------------------------------------------------------------------------------------------------
         # Scheduler
         scheduler.step()
@@ -269,29 +232,15 @@ def train(model, device, cfg,nndct_quant=False):
         ema.update_attr(model)
         final_epoch = epoch + 1 == epochs
 
-        if nndct_quant:
-            deployema_path = cfg.save_dir +f'/qat_result/deployableema_{epoch}'
-            deploy_path = cfg.save_dir + f'/qat_result/deployable_{epoch}'
-            deployable_net = qat_processor.convert_to_deployable(ema.ema, deployema_path)
-            deployable_net_state_dict = deployable_net.state_dict()
-            ori_model_ema.load_state_dict(deployable_net_state_dict)
-            deployable_net = qat_processor.convert_to_deployable(model, deploy_path)
-            deployable_net_state_dict = deployable_net.state_dict()
-            ori_model.load_state_dict(deployable_net_state_dict)
-
         if not cfg.notest or final_epoch:  # Calculate mAP
-            from pytorch_nndct.apis import torch_quantizer
-            import nndct_shared.quantization as nndct_quant
-
-
-            results, maps, times = evaluate(model=ori_model_ema,
+            results, maps, times = evaluate(model=ema.ema,
                                             cfg=cfg,
                                             device=device,
-                                            half=not nndct_quant,
-                                            nndct_quant=nndct_quant,
+                                            half=True,
+                                            nndct_quant=False,
                                             all_result=True,
                                             train_val=True,
-                                            deploy_dir=deployema_path,
+                                            deploy_dir='',
                                             save_coco=False
                                             )
 
@@ -305,32 +254,26 @@ def train(model, device, cfg,nndct_quant=False):
         # Save model
         save = (not cfg.notest) or final_epoch
         if save:
-            def get_quant_info(dir):
-                with open(dir + '/quant_info.json', 'r') as f:
-                    quant_info_str = f.read()
-                return quant_info_str
             epoch_path = weight_dir + '/' + str(epoch) + '.pt'
-            ckpt = {'epoch': epoch,
-                    'best_fitness': best_fitness,
-                    'best_epoch': best_epoch,
-                    'mAP': results[-1],
-                    'fitness': fi,
-                    'model': deepcopy(ori_model),
-                    'ema': deepcopy(ori_model_ema),
-                    'qat_model_quant_info': get_quant_info(deployema_path),
-                    'qat_model_quant_info_test': get_quant_info(deployema_path +'/test'),
-                    'qat_model_state_dict': model.state_dict(),
-                    'qat_ema_state_dict': ema.ema.state_dict(),
-                    'updates': ema.updates,
-                    'optimizer': None if final_epoch else optimizer.state_dict()}
+            epoch_path_ema = weight_dir + '/' + str(epoch) + '_ema.pt'
+            ckpt = model.model.state_dict()
+            ckpt['anchors']=model.m.anchors
+            ckpt_ema = ema.ema.model.state_dict()
+            ckpt_ema['anchors']=ema.ema.m.anchors
             logging.info(f'Results:\n\tepoch: {epoch}\n\tmAP:  {results[-1]}\n\tfitness: {fi}')
             # Save last, best and delete
             torch.save(ckpt, last_model)
+            torch.save(ckpt_ema, last_model_ema)
+
             if best_fitness == fi:
                 logging.info(f'Best results update:\n\tepoch: {epoch}\n\tmAP:  {results[-1]}\n\tfitness: {fi}')
                 torch.save(ckpt, best_model)
+                torch.save(ckpt_ema, best_model_ema)
+
             if (epoch >= 0) and (cfg.save_period > 0) and (epoch % cfg.save_period == 0):
                 torch.save(ckpt, epoch_path)
+                torch.save(ckpt, epoch_path_ema)
+
 
             del ckpt
         # end epoch ----------------------------------------------------------------------------------------------------
@@ -353,7 +296,7 @@ def get_args(**kwargs):
         '-optimizer', type=str, default='adam',
         help='training optimizer',
         dest='TRAIN_OPTIMIZER')
-    parser.add_argument('--save-dir', default='./build/val', help='save to save_dir')
+    parser.add_argument('--save-dir', default='./build/train', help='save to save_dir')
     parser.add_argument('--save-period', type=int, default=-1, help='Save checkpoint every x epochs (disabled if < 1)')
     parser.add_argument('--nndct_quant', action='store_true', help='Train nndct QAT model')
     parser.add_argument('--qat_group', action='store_true', help='param groups')

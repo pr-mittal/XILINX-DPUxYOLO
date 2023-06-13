@@ -23,7 +23,7 @@ sudo dpkg -i cuda-keyring_1.0-1_all.deb
 #ubuntu2204/x86_64
 sudo dpkg -i cuda-keyring_1.0-1_all.deb
 sudo apt-get update
-sudo apt-get install cuda
+sudo apt-get install cuda 
 sudo apt-get install nvidia-gds
 sudo reboot
 #POST INSTALLATION
@@ -47,9 +47,14 @@ echo \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-sudo docker run hello-world
 docker --version
+sudo groupadd docker
+sudo usermod -aG docker $USER
+sudo gpasswd -a $USER docker
+newgrp docker
+docker run hello-world
 #DOCKER BUILD
+sudo apt-get install -y nvidia-docker2
 git clone https://github.com/Xilinx/Vitis-AI
 cd Vitis-AI/docker
 ./docker_build.sh -t gpu -f pytorch

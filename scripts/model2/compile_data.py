@@ -10,7 +10,7 @@ model="yolox"
 
 
 if(model=="yolox"):
-    pathlib="/home/siliconmerc/git/dac_sdc_2023/scripts/model2/code/datasets"
+    pathlib="scripts/model2/code/datasets"
 else:
     pathlib = '/home/siliconmerc/git/dac_sdc_2023/scripts/model/dataset'
 labels={"Motor Vehicle":0,"Non-motorized Vehicle":1,"Pedestrian":2,"Traffic Light-Red Light":3,"Traffic Light-Yellow Light":4,"Traffic Light-Green Light":5,"Traffic Light-Off":6}
@@ -32,13 +32,13 @@ def divide_dataset(model="yolov3"):
 
         files=os.listdir(pathlib+"/images/JPEGImages")
         random.shuffle(files)
-        data={"train2017":files[0:round(0.8*len(files))],"test2017":files[round(0.8*len(files)):round(0.9*len(files))],"val2017":files[round(0.9*len(files)):]}
+        data={"train2017":files[0:round(0.2*len(files))],"test2017":files[round(0.925*len(files)):round(0.95*len(files))],"val2017":files[round(0.975*len(files)):]}
         for key,val in data.items():
-            if(os.path.exists(pathlib+"/"+key)):
-                shutil.rmtree(pathlib+"/"+key)
-            os.mkdir(pathlib+"/"+key)
+            # if(os.path.exists(pathlib+"/"+key)):
+            #     shutil.rmtree(pathlib+"/"+key)
+            # os.mkdir(pathlib+"/"+key)
             # os.mkdir(pathlib+"/"+key+"/images")
-            os.mkdir(pathlib+"/"+key+"/Annotations")
+            # os.mkdir(pathlib+"/"+key+"/Annotations")
             for file in val:
                 shutil.copy(pathlib+"/images/JPEGImages/"+file, pathlib+"/COCO/"+key+"/"+file)
                 # shutil.copy(pathlib+"/images/label/"+file.replace("jpg","json"), pathlib+"/"+key+"/Annotations/"+file.replace("jpg","json"))
@@ -62,11 +62,11 @@ def create_labels(model="yolov3"):
     if(model=="yolox"): 
         if(not os.path.exists(pathlib+"/COCO/annotations")):
             return
-        annotations={'info':{'description': 'COCO 2017 Dataset', 'url': 'http://cocodataset.org', 'version': '1.0', 'year': 2017, 'contributor': 'COCO Consortium', 'date_created': '2017/09/01'}
-                ,'licenses':[], 'images':[], 'annotations':[], 'categories':[]}
-        for key,val in labels.items():
-            annotations['categories'].append({'supercategory': 'object', 'id': val+1, 'name': key})
         for folder in ["train2017","test2017","val2017"]:
+            annotations={'info':{'description': 'COCO 2017 Dataset', 'url': 'http://cocodataset.org', 'version': '1.0', 'year': 2017, 'contributor': 'COCO Consortium', 'date_created': '2017/09/01'}
+                ,'licenses':[], 'images':[], 'annotations':[], 'categories':[]}
+            for key,val in labels.items():
+                annotations['categories'].append({'supercategory': 'object', 'id': val+1, 'name': key})    
             path=pathlib+"/COCO/annotations/"+folder
             label_id=1
             for filename in os.listdir(path):

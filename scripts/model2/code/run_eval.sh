@@ -20,4 +20,4 @@ GPU_NUM=1
 DATASET=${PWD}/code/datasets/COCO
 WEIGHTS=${PWD}/float/yolox.pth
 CFG=code/exps/default/yolox_s_deploy.py
-python code/tools/eval.py -f ${CFG} -c ${WEIGHTS} -b 32 -d ${GPU_NUM} --conf 0.001
+python code/tools/eval.py -f ${CFG} -c ${WEIGHTS} -b 4 -d ${GPU_NUM} --conf 0.001
