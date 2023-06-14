@@ -37,7 +37,10 @@ from torch.optim import Adam, AdamW, SGD, lr_scheduler
 from utils.utils import labels_to_class_weights,check_anchors,compute_loss,fitness
 from utils import torch_utils
 from yolov3_test import evaluate
-torch.cuda.empty_cache()
+def force_cudnn_initialization():
+    s = 32
+    dev = torch.device('cuda')
+    torch.nn.functional.conv2d(torch.zeros(s, s, s, s, device=dev), torch.zeros(s, s, s, s, device=dev))
 
 def train(model, device, cfg,nndct_quant=False):
     # print(torch.cuda.memory_summary(device=None, abbreviated=False))
@@ -365,6 +368,9 @@ if __name__ == "__main__":
     os.environ["CUDA_VISIBLE_DEVICES"] = cfg.gpu
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     logging.info(f'Using device {device}')
+    if(torch.cuda.is_available()):
+        torch.cuda.empty_cache()
+        force_cudnn_initialization()
 
     # # model
     anchors = [[10, 13, 16, 30, 33, 23], [30, 61, 62, 45, 59, 119], [116, 90, 156, 198, 373, 326]]

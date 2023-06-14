@@ -28,7 +28,10 @@ from yolox.core import Trainer, launch
 from yolox.exp import get_exp
 from yolox.utils import configure_nccl, configure_omp, get_num_devices
 
-
+def force_cudnn_initialization():
+    s = 32
+    dev = torch.device('cuda')
+    torch.nn.functional.conv2d(torch.zeros(s, s, s, s, device=dev), torch.zeros(s, s, s, s, device=dev))
 def make_parser():
     parser = argparse.ArgumentParser("YOLOX train parser")
     parser.add_argument("-expn", "--experiment-name", type=str, default=None)
@@ -130,7 +133,7 @@ if __name__ == "__main__":
     # print(args.exp_file, args.name)
     exp = get_exp(args.exp_file, args.name) 
     exp.merge(args.opts)
-
+    force_cudnn_initialization()
     if not args.experiment_name:
         args.experiment_name = exp.exp_name
 

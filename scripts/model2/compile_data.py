@@ -10,7 +10,7 @@ model="yolox"
 
 
 if(model=="yolox"):
-    pathlib="scripts/model2/code/datasets"
+    pathlib="/media/Docker/git/dac_sdc_2023/scripts/model2/code/datasets"
 else:
     pathlib = '/home/siliconmerc/git/dac_sdc_2023/scripts/model/dataset'
 labels={"Motor Vehicle":0,"Non-motorized Vehicle":1,"Pedestrian":2,"Traffic Light-Red Light":3,"Traffic Light-Yellow Light":4,"Traffic Light-Green Light":5,"Traffic Light-Off":6}
@@ -32,7 +32,7 @@ def divide_dataset(model="yolov3"):
 
         files=os.listdir(pathlib+"/images/JPEGImages")
         random.shuffle(files)
-        data={"train2017":files[0:round(0.2*len(files))],"test2017":files[round(0.925*len(files)):round(0.95*len(files))],"val2017":files[round(0.975*len(files)):]}
+        data={"train2017":files[0:round(0.2*len(files))],"test2017":files[round(0.925*len(files)):round(0.95*len(files))],"val2017":files[round(0.99*len(files)):]}
         for key,val in data.items():
             # if(os.path.exists(pathlib+"/"+key)):
             #     shutil.rmtree(pathlib+"/"+key)
