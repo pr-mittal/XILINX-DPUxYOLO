@@ -71,7 +71,8 @@ def compile_model(model="yolov3"):
         pretrained_model =  "float/yolox.pth"
         with open(pretrained_model, 'rb') as f:
             checkpoint = torch.load(f, map_location='cpu')
-        # print(checkpoint['model'].keys())
+        # checkpoint['start_epoch']=0
+        # print(checkpoint['start_epoch'])
 
         import torch.nn as nn
 
@@ -101,10 +102,10 @@ def compile_model(model="yolov3"):
         # for keys in checkpoint['model'].keys():
         #     if(keys.split(".")[0]=="head"):
         #         checkpoint['model'][keys]=model.state_dict()[keys]
-        # torch.save(checkpoint,pretrained_model)
+        torch.save(checkpoint,pretrained_model)
         
-        #test
-        model.load_state_dict(checkpoint["model"])
+        # #test
+        # model.load_state_dict(checkpoint["model"])
 
 if __name__=="__main__":
     compile_model("yolox")
